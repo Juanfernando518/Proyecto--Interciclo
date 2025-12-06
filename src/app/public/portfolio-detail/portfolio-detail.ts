@@ -1,10 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-portfolio-detail',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './portfolio-detail.html',
-  styleUrl: './portfolio-detail.css',
+  styleUrls: ['./portfolio-detail.css'],
+  standalone: true
 })
 export class PortfolioDetail {
 

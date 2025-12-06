@@ -1,10 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-schedule-advice',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './schedule-advice.html',
-  styleUrl: './schedule-advice.css',
+  styleUrls: ['./schedule-advice.css'],
+  standalone: true
 })
 export class ScheduleAdvice {
 

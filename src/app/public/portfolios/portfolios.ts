@@ -1,10 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-portfolios',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './portfolios.html',
-  styleUrl: './portfolios.css',
+  styleUrls: ['./portfolios.css'],
+  standalone: true
 })
 export class Portfolios {
 

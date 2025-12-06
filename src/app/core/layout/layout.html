@@ -1,0 +1,21 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <h2 class="logo">ProyectoInterciclo</h2>
+
+    <div class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
+      <a routerLink="/portfolios" routerLinkActive="active">Portafolios</a>
+      <a routerLink="/programmer" routerLinkActive="active">Programador</a>
+      <a routerLink="/admin" routerLinkActive="active">Admin</a>
+      <a routerLink="/auth/login" routerLinkActive="active">Login</a>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+  <router-outlet></router-outlet>
+</div>
+
+<footer class="footer">
+  <p>© 2025 EcoCuenca Tech - Todos los derechos reservados</p>
+</footer>
