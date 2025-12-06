@@ -1,0 +1,9 @@
+<section class="grid">
+  <div *ngFor="let p of list" class="card">
+    <div class="avatar">{{ p.name.charAt(0) }}</div>
+    <h3>{{ p.name }}</h3>
+    <p class="spec">{{ p.specialty }}</p>
+    <p class="bio">{{ p.description }}</p> <!-- reemplaza bio por description -->
+    <a [routerLink]="['/portfolio', p.id]" class="btn">Ver portafolio</a> <!-- reemplaza uid por id -->
+  </div>
+</section>
