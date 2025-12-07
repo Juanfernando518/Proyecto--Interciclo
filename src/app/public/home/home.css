@@ -1,0 +1,146 @@
+.home-container {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+/* Hero Section (Encabezado) */
+.hero-section {
+  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+  color: white;
+  text-align: center;
+  padding: 4rem 1rem;
+  margin-bottom: 3rem;
+}
+
+.hero-section h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.3); }
+
+/* Grid de Tarjetas */
+.programmers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Diseño de Tarjeta Individual */
+.card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: #e0e7ff;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid white;
+  object-fit: cover;
+  transform: translateY(40px); /* Para que sobresalga */
+}
+
+.card-body {
+  padding: 3rem 1.5rem 1.5rem; /* Padding top extra por el avatar */
+  text-align: center;
+  flex-grow: 1;
+}
+
+.card-body h3 { margin: 0; color: #1e293b; }
+
+.specialty {
+  color: #4f46e5;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.description {
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* --- FOOTER DE LA TARJETA (Donde están los botones) --- */
+.card-footer {
+  padding: 1.5rem;
+  background-color: #f8fafc; /* Gris muy suave para diferenciar del contenido */
+  border-top: 1px solid #e2e8f0; /* Línea sutil de separación */
+  display: flex;
+  gap: 12px; /* Separación clara entre los botones */
+  justify-content: center; /* Botones centrados */
+  align-items: center;
+}
+
+/* --- ESTILOS COMUNES PARA LOS LINK-BOTONES --- */
+.card-footer a {
+  text-decoration: none; /* Quita el subrayado azul típico de los links */
+  padding: 10px 18px;    /* Más espacio interno para que se vean clicables */
+  border-radius: 8px;    /* Bordes redondeados modernos */
+  font-size: 0.9rem;
+  font-weight: 600;      /* Texto un poco más grueso */
+  transition: all 0.2s ease; /* Suaviza el efecto hover */
+  text-align: center;
+  flex: 1;               /* Hace que ambos botones tengan el mismo ancho */
+  max-width: 140px;      /* Evita que se estiren demasiado */
+}
+
+/* --- BOTÓN 1: VER PORTAFOLIO (Principal - Relleno) --- */
+.btn-primary {
+  background-color: #4f46e5; /* Indigo */
+  color: white;
+  border: 1px solid #4f46e5;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca; /* Un poco más oscuro al pasar el mouse */
+  transform: translateY(-2px); /* Efecto de "levantarse" */
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3); /* Sombra suave */
+}
+
+/* --- BOTÓN 2: AGENDAR CITA (Secundario - Borde) --- */
+.btn-outline {
+  background-color: transparent;
+  color: #4f46e5;
+  border: 2px solid #e0e7ff; /* Borde un poco más grueso y azul claro */
+}
+
+.btn-outline:hover {
+  border-color: #4f46e5;
+  background-color: #eff6ff; /* Fondo azulito muy pálido */
+  color: #4338ca;
+}

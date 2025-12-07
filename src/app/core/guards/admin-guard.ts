@@ -1,16 +1,22 @@
 import { CanActivate, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Auth } from '../services/auth';
+import { AuthService } from '../services/auth';
 
 @Injectable({
   providedIn: 'root',
-})  
-
+})
 export class adminGuard implements CanActivate {
-  constructor(private auth: Auth, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router) {}
+
   canActivate(): boolean {
-    const u = this.auth.currentUser;
-    if(u?.role==='admin') return true;
+    // CORRECCIÓN: Agregamos () para leer el valor de la señal
+    const u = this.auth.currentUser(); 
+    
+    // Ahora 'u' ya es el objeto AppUser y TypeScript reconoce 'role'
+    if (u?.role === 'admin') {
+      return true;
+    }
+    
     this.router.navigate(['/']);
     return false;
   }

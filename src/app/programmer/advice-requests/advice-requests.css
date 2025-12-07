@@ -1,0 +1,77 @@
+.container { max-width: 900px; margin: 0 auto; padding: 2rem; font-family: 'Segoe UI', sans-serif; }
+h1 { margin-bottom: 0.5rem; color: #1e293b; }
+.subtitle { color: #64748b; margin-bottom: 2rem; }
+
+.section-block { margin-bottom: 3rem; }
+h2 { font-size: 1.25rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem; color: #334155; }
+
+/* Tarjetas Pendientes */
+.advisory-list { display: grid; gap: 1rem; }
+.card { background: white; border: 1px solid #e2e8f0; border-left: 5px solid #cbd5e1; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.card.pending { border-left-color: #f59e0b; } /* Naranja para pendientes */
+
+.card-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+.date { color: #64748b; font-size: 0.9rem; }
+.topic { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+.contact { color: #4f46e5; font-size: 0.9rem; margin: 0; }
+
+.card-actions { margin-top: 1.5rem; text-align: right; }
+.btn-respond { background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+
+/* Tabla Historial */
+.history-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+.history-table th { background: #f8fafc; text-align: left; padding: 12px; font-weight: 600; color: #475569; }
+.history-table td { padding: 12px; border-top: 1px solid #e2e8f0; }
+.badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+.badge.accepted { background: #dcfce7; color: #166534; }
+.badge.rejected { background: #fee2e2; color: #991b1b; }
+.comment { font-style: italic; color: #64748b; font-size: 0.9rem; }
+
+/* Modal */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 100; }
+.modal-content { background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+.request-summary { background: #f8fafc; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; }
+textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 1.5rem; box-sizing: border-box; }
+
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-accept { background: #16a34a; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+.btn-reject { background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+.btn-cancel { background: transparent; border: 1px solid #ccc; color: #555; padding: 10px 20px; border-radius: 6px; cursor: pointer; }.container { max-width: 900px; margin: 0 auto; padding: 2rem; font-family: 'Segoe UI', sans-serif; }
+h1 { margin-bottom: 0.5rem; color: #1e293b; }
+.subtitle { color: #64748b; margin-bottom: 2rem; }
+
+.section-block { margin-bottom: 3rem; }
+h2 { font-size: 1.25rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem; color: #334155; }
+
+/* Tarjetas Pendientes */
+.advisory-list { display: grid; gap: 1rem; }
+.card { background: white; border: 1px solid #e2e8f0; border-left: 5px solid #cbd5e1; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.card.pending { border-left-color: #f59e0b; } /* Naranja para pendientes */
+
+.card-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+.date { color: #64748b; font-size: 0.9rem; }
+.topic { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+.contact { color: #4f46e5; font-size: 0.9rem; margin: 0; }
+
+.card-actions { margin-top: 1.5rem; text-align: right; }
+.btn-respond { background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+
+/* Tabla Historial */
+.history-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+.history-table th { background: #f8fafc; text-align: left; padding: 12px; font-weight: 600; color: #475569; }
+.history-table td { padding: 12px; border-top: 1px solid #e2e8f0; }
+.badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+.badge.accepted { background: #dcfce7; color: #166534; }
+.badge.rejected { background: #fee2e2; color: #991b1b; }
+.comment { font-style: italic; color: #64748b; font-size: 0.9rem; }
+
+/* Modal */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 100; }
+.modal-content { background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+.request-summary { background: #f8fafc; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; }
+textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 1.5rem; box-sizing: border-box; }
+
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-accept { background: #16a34a; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+.btn-reject { background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+.btn-cancel { background: transparent; border: 1px solid #ccc; color: #555; padding: 10px 20px; border-radius: 6px; cursor: pointer; }

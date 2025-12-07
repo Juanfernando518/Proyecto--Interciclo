@@ -1,1 +1,89 @@
-<p>projects works!</p>
+<div class="container fade-in">
+  <header class="header-actions">
+    <h1>Mis Proyectos</h1>
+    <button (click)="openCreate()" class="btn-primary">
+      + Nuevo Proyecto
+    </button>
+  </header>
+
+  <div class="projects-list">
+    @for (proj of projects$ | async; track proj) {
+      <div class="project-item">
+        <img [src]="proj.imageUrl || 'https://via.placeholder.com/100'" class="thumb">
+        
+        <div class="info">
+          <h3>{{ proj.title }}</h3>
+          <span class="badge" [class.academic]="proj.type === 'academic'">
+            {{ proj.type === 'academic' ? 'Académico' : 'Laboral' }}
+          </span>
+          <p class="techs">{{ proj.technologies.join(', ') }}</p>
+        </div>
+
+        <div class="actions">
+          <button (click)="deleteProject(proj.id!)" class="btn-danger">
+            🗑️
+          </button>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <p>No tienes proyectos registrados. ¡Agrega el primero!</p>
+      </div>
+    }
+  </div>
+
+  @if (showForm) {
+    <div class="modal-overlay">
+      <div class="modal-content slide-up">
+        <h2>{{ isEditing ? 'Editar' : 'Nuevo' }} Proyecto</h2>
+        
+        <form (ngSubmit)="saveProject()">
+          
+          <div class="form-group">
+            <label>Título del Proyecto</label>
+            <input [(ngModel)]="currentProject.title" name="title" required placeholder="Ej: E-commerce Angular">
+          </div>
+
+          <div class="form-group">
+            <label>Tipo de Proyecto</label>
+            <select [(ngModel)]="currentProject.type" name="type">
+              <option value="academic">Proyecto Académico</option>
+              <option value="laboral">Proyecto Laboral</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea [(ngModel)]="currentProject.description" name="desc" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Tecnologías (Separadas por coma)</label>
+            <input [(ngModel)]="techString" name="techs" placeholder="Ej: Angular, Firebase, CSS">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Link Repositorio (GitHub)</label>
+              <input [(ngModel)]="currentProject.repoUrl" name="repo">
+            </div>
+            <div class="form-group">
+              <label>Link Demo (URL)</label>
+              <input [(ngModel)]="currentProject.demoUrl" name="demo">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>URL Imagen de Portada</label>
+            <input [(ngModel)]="currentProject.imageUrl" name="img" placeholder="https://...">
+          </div>
+
+          <div class="modal-actions">
+            <button type="submit" class="btn-primary">Guardar</button>
+            <button type="button" (click)="showForm = false" class="btn-outline">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

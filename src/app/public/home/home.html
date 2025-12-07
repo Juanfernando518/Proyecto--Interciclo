@@ -1,2 +1,50 @@
 <h1>Bienvenido a ProyectoInterciclo</h1>
-<p>Este es el Home real</p>
+<div class="home-container">
+  <header class="hero-section">
+    <h1>Encuentra a tu Experto</h1>
+    <p>Explora los portafolios de nuestros mejores programadores y agenda una asesoría.</p>
+
+    <div class="actions">
+      <a routerLink="/auth/login" class="btn-secondary">Soy Programador / Admin</a>
+    </div>
+  </header>
+
+  <section class="programmers-grid">
+    <div class="card" *ngFor="let dev of programmers$ | async">
+
+      <div class="card-header">
+        <img [src]="dev.photoURL || 'https://ui-avatars.com/api/?name='+dev.displayName" 
+             alt="Foto de perfil" 
+             class="avatar">
+      </div>
+
+      <div class="card-body">
+        <h3>{{ dev.displayName }}</h3>
+        <span class="specialty">{{ dev.specialty || 'Programador' }}</span>
+
+        <p class="description">
+          {{ dev.description || 'Sin descripción disponible.' }}
+        </p>
+
+        <div class="social-links" *ngIf="dev.socialLinks">
+          <a *ngIf="dev.socialLinks.github" [href]="dev.socialLinks.github" target="_blank">GitHub</a>
+          <a *ngIf="dev.socialLinks.linkedin" [href]="dev.socialLinks.linkedin" target="_blank">LinkedIn</a>
+        </div>
+      </div>
+
+     <div class="card-footer">
+  <a [routerLink]="['/portfolio', dev.uid]" 
+     [queryParams]="{ tab: 'projects' }"
+     class="btn-primary">
+    Ver Portafolio
+  </a>
+  
+  <a [routerLink]="['/portfolio', dev.uid]" 
+     [queryParams]="{ tab: 'advisory' }"
+     class="btn-outline">
+    Agendar Cita
+  </a>
+</div>
+    </div>
+  </section>
+</div>

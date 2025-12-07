@@ -1,0 +1,101 @@
+<div class="container fade-in">
+  
+  <div class="page-header">
+    <h1>✏️ Editar Perfil</h1>
+    <p>Completa tu información para que los clientes te conozcan mejor.</p>
+  </div>
+
+  <form (ngSubmit)="saveProfile()" class="main-card">
+    
+    <div class="photo-section">
+      <div class="avatar-wrapper">
+        <img [src]="userProfile.photoURL || 'https://via.placeholder.com/150'" class="avatar-preview">
+      </div>
+      
+      <div class="photo-inputs">
+        <label>Foto de Perfil (URL)</label>
+        <div class="input-with-hint">
+          <input type="text" 
+                 [(ngModel)]="userProfile.photoURL" 
+                 name="photo" 
+                 placeholder="Ej: https://media.licdn.com/dms/image/..."
+                 class="form-input">
+          <small>Tip: Puedes copiar la dirección de imagen de tu LinkedIn o GitHub.</small>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="form-grid">
+      
+      <div class="form-group">
+        <label>Nombre Público</label>
+        <input type="text" 
+               [(ngModel)]="userProfile.displayName" 
+               name="name" 
+               required 
+               class="form-input"
+               placeholder="Tu nombre completo">
+      </div>
+
+      <div class="form-group">
+        <label>Especialidad / Cargo</label>
+        <input type="text" 
+               [(ngModel)]="userProfile.specialty" 
+               name="specialty" 
+               class="form-input"
+               placeholder="Ej: Fullstack Developer, UX Designer...">
+      </div>
+
+    </div>
+
+    <div class="form-group full-width">
+      <label>Sobre Mí (Biografía)</label>
+      <textarea [(ngModel)]="userProfile.description" 
+                name="desc" 
+                rows="4" 
+                class="form-input"
+                placeholder="Escribe un breve resumen de tu experiencia y habilidades..."></textarea>
+    </div>
+
+    <hr class="divider">
+
+    <h3 class="section-title">Redes Sociales</h3>
+    
+    <div class="form-grid">
+      
+      <div class="form-group">
+        <label>GitHub URL</label>
+        <input type="text" 
+               [ngModel]="userProfile.socialLinks?.github" 
+               (ngModelChange)="userProfile.socialLinks = userProfile.socialLinks || {}; userProfile.socialLinks!.github = $event"
+               name="github"
+               class="form-input"
+               placeholder="https://github.com/tu-usuario">
+      </div>
+
+      <div class="form-group">
+        <label>LinkedIn URL</label>
+        <input type="text" 
+               [ngModel]="userProfile.socialLinks?.linkedin" 
+               (ngModelChange)="userProfile.socialLinks = userProfile.socialLinks || {}; userProfile.socialLinks!.linkedin = $event"
+               name="linkedin"
+               class="form-input"
+               placeholder="https://linkedin.com/in/tu-usuario">
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-save" [disabled]="isLoading">
+        @if (isLoading) {
+          <span class="spinner"></span> Guardando...
+        } @else {
+          💾 Guardar Cambios
+        }
+      </button>
+    </div>
+
+  </form>
+</div>

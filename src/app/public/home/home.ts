@@ -1,14 +1,20 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common'; // Importante para el *ngFor y AsyncPipe
+import { RouterLink } from '@angular/router';   // Para navegar al detalle
+import { Observable } from 'rxjs';
+import { FirestoreService } from '../../core/services/firestoreService';
+import { AppUser } from '../../core/models/models';
+
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule,FormsModule],
+  standalone: true,
+  imports: [CommonModule, RouterLink], 
   templateUrl: './home.html',
-  styleUrls: ['./home.css'],
-  standalone: true
+  styleUrl: './home.css'
 })
 export class Home {
+  private firestoreService = inject(FirestoreService);
 
+  programmers$: Observable<AppUser[]> = this.firestoreService.getProgrammers();
 }

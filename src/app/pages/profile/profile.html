@@ -1,0 +1,30 @@
+<div class="container" *ngIf="userProfile">
+  <h2>Editar Mi Perfil</h2>
+  
+  <form (ngSubmit)="saveProfile()">
+    
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="userProfile.displayName" name="displayName">
+    </div>
+
+    <div class="form-group">
+      <label>Foto de Perfil (URL de imagen)</label>
+      <input type="text" 
+             [(ngModel)]="userProfile.photoURL" 
+             name="photoURL" 
+             placeholder="Pega aquí el enlace de tu foto">
+      
+      <div *ngIf="userProfile.photoURL" class="preview">
+        <p>Vista previa:</p>
+        <img [src]="userProfile.photoURL" alt="Foto perfil" width="100">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Especialidad (Solo Programadores)</label>
+      <input type="text" [(ngModel)]="userProfile.specialty" name="specialty" placeholder="Ej: Backend Developer">
+    </div>
+
+    <button type="submit" class="btn-save">Guardar Cambios</button>
+  </form>
+</div>

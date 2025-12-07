@@ -1,18 +1,19 @@
-import { CanActivate,Router } from '@angular/router';
-import { Injectable } from '@angular/core';
-import { Auth } from '../services/auth';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../services/auth';
 
-@Injectable({
-  providedIn: 'root',
-})
+export const programmerGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService); // Inyectamos el servicio
+  const router = inject(Router);
 
+  // Leemos la Signal ejecutándola con paréntesis ()
+  const user = authService.currentUser();
 
-export class programmerGuard implements CanActivate {
-  constructor(private auth: Auth, private router: Router) {}
-  canActivate(): boolean {
-    const u = this.auth.currentUser;
-    if(u?.role==='programmer') return true;
-    this.router.navigate(['/']);
-    return false;
+  if (user && user.role === 'programmer') {
+    return true;
   }
-}
+
+  // Si no es programador, lo mandamos al home o login
+  router.navigate(['/']);
+  return false;
+};

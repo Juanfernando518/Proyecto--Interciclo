@@ -1,0 +1,35 @@
+<div class="container">
+  <h2>Panel de Administración</h2>
+  <p>Gestiona los roles de los usuarios registrados.</p>
+
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>Usuario</th>
+        <th>Email</th>
+        <th>Rol Actual</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users$ | async">
+        <td>
+          <img [src]="user.photoURL || 'https://via.placeholder.com/40'" class="avatar">
+          {{ user.displayName }}
+        </td>
+        <td>{{ user.email }}</td>
+        <td>
+          <span [class]="'badge ' + user.role">{{ user.role | uppercase }}</span>
+        </td>
+        <td>
+          <button *ngIf="user.role !== 'programmer'" (click)="makeProgrammer(user)">
+            Ascender a Programador
+          </button>
+          <button *ngIf="user.role === 'programmer'" (click)="removePrivileges(user)" class="danger">
+            Degradar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
