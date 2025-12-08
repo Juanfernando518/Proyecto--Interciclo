@@ -69,10 +69,19 @@ export class AdviceRequests {
         this.responseMessage
       );
       
-      // Simulación de notificación [cite: 78-82]
-      alert(`Solicitud ${status === 'accepted' ? 'APROBADA' : 'RECHAZADA'} correctamente.`);
+      if (status === 'accepted') {
+        // CASO 1: APROBADO
+        // NO cerramos el modal (no hacemos selectedAdvisory = null)
+        // Actualizamos el estado localmente para que el HTML muestre los botones de WhatsApp
+        this.selectedAdvisory.status = 'accepted'; 
+        alert('Solicitud APROBADA. Ahora puedes contactar al cliente.');
+      } else {
+        // CASO 2: RECHAZADO
+        // Aquí sí cerramos el modal inmediatamente
+        alert('Solicitud RECHAZADA.');
+        this.selectedAdvisory = null; 
+      }
       
-      this.selectedAdvisory = null; // Cerrar modal
     } catch (error) {
       console.error(error);
       alert('Error al actualizar');
