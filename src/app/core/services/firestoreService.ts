@@ -55,6 +55,11 @@ getUser(uid: string): Observable<AppUser> {
     const projectDoc = doc(this.firestore, `projects/${projectId}`);
     return deleteDoc(projectDoc);
   }
+  // Actualizar un proyecto existente
+updateProject(projectId: string, data: Partial<Project>) {
+  const projectDoc = doc(this.firestore, `projects/${projectId}`);
+  return updateDoc(projectDoc, data);
+}
 
   // --- ASESORÍAS ---
 

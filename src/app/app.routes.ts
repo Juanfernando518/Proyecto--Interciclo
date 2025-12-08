@@ -7,6 +7,7 @@ import { programmerGuard } from './core/guards/programmer-guard';
 import { AdviceRequests } from './programmer/advice-requests/advice-requests';
 import { ProfileComponent } from './programmer/programmer-profile/programmer-profile';
 import { DashboardComponent } from './admin/dashboard/dashboard';
+import { authGuard } from './core/guards/auth-guard';
 
 
 export const routes: Routes = [
@@ -14,8 +15,8 @@ export const routes: Routes = [
  { path: '', component: Home },
  {
   path: 'admin-dashboard', 
-    component: DashboardComponent
-    //canActivate: [adminGuard] // ¡Muy importante!
+    component: DashboardComponent,
+    canActivate: [adminGuard] // ¡Muy importante!
   },
  
   { path: 'portfolio/:id', component: Portfolios },
@@ -45,9 +46,9 @@ export const routes: Routes = [
   },
   { 
     path: 'profile', 
-    component: ProfileComponent 
+    component: ProfileComponent,
     // Opcional: Si quieres protegerlo para que solo logueados entren:
-    // canActivate: [authGuard] 
+     canActivate: [authGuard] 
   },
   
   { path: '**', redirectTo: '' }

@@ -36,6 +36,7 @@ export interface Advisory {
   clientId: string;
   clientName: string;
   clientEmail: string;
+  clientPhone?: string;
   topic: string;
   dateRequest: string;
   status: 'pending' | 'accepted' | 'rejected';

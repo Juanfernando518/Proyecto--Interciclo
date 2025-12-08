@@ -75,3 +75,71 @@ textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius:
 .btn-accept { background: #16a34a; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
 .btn-reject { background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
 .btn-cancel { background: transparent; border: 1px solid #ccc; color: #555; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+
+/* Estilos para los botones de contacto */
+.contact-actions {
+  text-align: center;
+  padding-top: 1rem;
+}
+
+.success-msg {
+  color: #16a34a;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.btn-social {
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s;
+}
+
+.btn-social:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.whatsapp {
+  background-color: #25D366;
+}
+
+.email {
+  background-color: #EA4335;
+}
+
+.no-phone {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  align-self: center;
+  border: 1px dashed #cbd5e1;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px dashed #cbd5e1;
+  margin: 10px 0;
+}
+
+.btn-close-modal {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+}

@@ -66,20 +66,22 @@
   </section>
 
   @if (selectedAdvisory) {
-    <div class="modal-overlay">
-      <div class="modal-content slide-up">
-        <h3>Responder a {{ selectedAdvisory.clientName }}</h3>
-        
-        <div class="request-summary">
-          <p><strong>Solicita para:</strong> {{ selectedAdvisory.dateRequest | date:'medium' }}</p>
-          <p><strong>Motivo:</strong> "{{ selectedAdvisory.topic }}"</p>
-        </div>
+  <div class="modal-overlay">
+    <div class="modal-content slide-up">
+      <h3>Gestionar Solicitud</h3>
+      
+      <div class="request-summary">
+        <p><strong>Cliente:</strong> {{ selectedAdvisory.clientName }}</p>
+        <p><strong>Teléfono:</strong> {{ selectedAdvisory.clientPhone || 'No registrado' }}</p>
+        <p><strong>Email:</strong> {{ selectedAdvisory.clientEmail }}</p>
+        <hr class="divider">
+        <p><strong>Motivo:</strong> "{{ selectedAdvisory.topic }}"</p>
+      </div>
 
+      @if (selectedAdvisory.status === 'pending') {
         <div class="form-group">
-          <label>Mensaje de respuesta (Requerido):</label>
-          <textarea [(ngModel)]="responseMessage" 
-                    rows="3" 
-                    placeholder="Ej: Claro, nos vemos ese día... o Lo siento, no tengo disponibilidad..."></textarea>
+          <label>Mensaje de respuesta:</label>
+          <textarea [(ngModel)]="responseMessage" rows="3"></textarea>
         </div>
 
         <div class="modal-actions">
@@ -87,7 +89,36 @@
           <button (click)="submitResponse('rejected')" class="btn-reject">❌ Rechazar</button>
           <button (click)="selectedAdvisory = null" class="btn-cancel">Cancelar</button>
         </div>
-      </div>
+      }
+
+      @if (selectedAdvisory.status === 'accepted') {
+        <div class="contact-actions">
+          <p class="success-msg">✅ ¡Solicitud Aprobada! Contacta al cliente:</p>
+          
+          <div class="btn-row">
+            @if (selectedAdvisory.clientPhone) {
+              <a [href]="getWhatsAppLink(selectedAdvisory)" target="_blank" class="btn-social whatsapp">
+                📲 WhatsApp
+              </a>
+            } @else {
+              <span class="no-phone">⚠️ Sin teléfono registrado</span>
+            }
+
+            <a [href]="getMailLink(selectedAdvisory)" class="btn-social email">
+              ✉️ Enviar Correo
+            </a>
+          </div>
+
+          <button (click)="selectedAdvisory = null" class="btn-close-modal">Cerrar</button>
+        </div>
+      }
+
     </div>
+  </div>
   }
+  @if (selectedAdvisory?.status === 'accepted') {
+  <a [href]="getWhatsAppLink(selectedAdvisory!)" target="_blank" class="btn-whatsapp">
+    📲 Enviar Confirmación por WhatsApp
+  </a>
+}
 </div>

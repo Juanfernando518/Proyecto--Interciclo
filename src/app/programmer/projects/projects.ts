@@ -20,7 +20,7 @@ export class Projects {
 
   // Lista de proyectos del usuario
   projects$: Observable<Project[]>;
-  
+
   // Variables para el Formulario (Crear/Editar)
   showForm = false;
   isEditing = false;
@@ -70,16 +70,16 @@ export class Projects {
     try {
       // Convertir el string de tecnologías a array si es necesario
       // (Aquí asumimos que el input lo maneja, o lo convertimos manualmente)
-      
+
+      // Busca la parte del if (this.isEditing...) y cámbiala por esto:
       if (this.isEditing && this.currentProject.id) {
-        // ACTUALIZAR (Falta implementar updateProject en el servicio, usaremos delete+add o create update)
-        // Por ahora, usaremos addProject para crear, implementemos update en el servicio luego.
-        // NOTA: Para simplificar, aquí asumimos creación.
-         await this.firestoreService.addProject(this.currentProject); // OJO: Esto duplica si editamos sin ID
+        // AHORA SÍ ACTUALIZA DE VERDAD
+        await this.firestoreService.updateProject(this.currentProject.id, this.currentProject);
       } else {
         // CREAR NUEVO
         await this.firestoreService.addProject(this.currentProject);
       }
+
       
       alert('Proyecto guardado con éxito');
       this.showForm = false;

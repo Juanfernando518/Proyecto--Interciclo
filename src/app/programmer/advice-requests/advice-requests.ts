@@ -78,4 +78,19 @@ export class AdviceRequests {
       alert('Error al actualizar');
     }
   }
+  getWhatsAppLink(advisory: Advisory): string {
+    if (!advisory.clientPhone) return '#'; // Si no dio teléfono, no hace nada
+    
+    const text = `Hola ${advisory.clientName}, soy el programador. He ACEPTADO tu solicitud de asesoría sobre "${advisory.topic}". Nos vemos el ${new Date(advisory.dateRequest).toLocaleString()}.`;
+    
+    // Formato universal para WhatsApp Web/App
+    return `https://wa.me/${advisory.clientPhone}?text=${encodeURIComponent(text)}`;
+  }
+  // GENERAR LINK DE CORREO (MAILTO)
+  getMailLink(advisory: Advisory): string {
+    const subject = `Confirmación de Asesoría: ${advisory.topic}`;
+    const body = `Hola ${advisory.clientName},\n\nHe aceptado tu solicitud de asesoría para la fecha: ${new Date(advisory.dateRequest).toLocaleString()}.\n\nSaludos cordiales.`;
+    
+    return `mailto:${advisory.clientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
 }

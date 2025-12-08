@@ -29,6 +29,7 @@ export class Portfolios implements OnInit {
   showForm = false; // Controla si se ve el formulario
   topic = '';       // Para el input del motivo
   dateRequest = ''; // Para el input de fecha
+  clientPhone = ''; //telefono
   // ----------------------------------------
 
   constructor() {
@@ -71,6 +72,7 @@ export class Portfolios implements OnInit {
       clientId: currentUser.uid,
       clientName: currentUser.displayName,
       clientEmail: currentUser.email,
+      clientPhone: this.clientPhone,
       topic: this.topic,
       dateRequest: new Date(this.dateRequest).toISOString(),
       status: 'pending'
