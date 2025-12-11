@@ -1,0 +1,266 @@
+/* Variables de Diseño */
+:root {
+  --sidebar-width: 260px;
+  --navbar-height: 64px;
+  --primary: #4f46e5;
+  --bg-light: #f8fafc;
+}
+
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden; /* Evita doble scroll */
+}
+
+/* --- NAVBAR --- */
+.navbar {
+  height: var(--navbar-height);
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 50;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.navbar-left, .navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-logo {
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.btn-menu {
+  background: none; border: none; cursor: pointer; color: #333;
+  display: flex; align-items: center; padding: 5px;
+}
+
+/* Avatar y Usuario */
+.user-badge { display: flex; align-items: center; gap: 10px; }
+.user-badge span { font-size: 0.75rem; font-weight: bold; color: #64748b; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+.avatar-circle {
+  width: 36px; height: 36px; background: var(--primary); color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: bold;
+}
+.btn-login {
+  background: var(--primary); color: white; padding: 8px 16px;
+  border-radius: 6px; text-decoration: none; font-size: 0.9rem;
+}
+
+/* --- LAYOUT PRINCIPAL --- */
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-light);
+}
+
+/* --- SIDEBAR (DRAWER) --- */
+.sidebar {
+  width: var(--sidebar-width);
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  position: absolute; /* En móvil es absoluto */
+  top: 0; bottom: 0; left: 0;
+  transform: translateX(-100%); /* Oculto por defecto en móvil */
+  transition: transform 0.3s ease;
+  z-index: 40;
+}
+
+.sidebar.open {
+  transform: translateX(0); /* Mostrar en móvil */
+  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+  height: var(--navbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.btn-close { font-size: 1.5rem; background: none; border: none; cursor: pointer; }
+
+/* Menú Links */
+.sidebar-nav { padding: 1rem; overflow-y: auto; }
+.sidebar-nav ul { list-style: none; padding: 0; margin: 0; }
+.sidebar-nav li { margin-bottom: 0.5rem; }
+
+.sidebar-nav a, .btn-logout {
+  display: block; width: 100%; text-align: left;
+  padding: 10px 15px; border-radius: 8px;
+  text-decoration: none; color: #475569; font-weight: 500;
+  transition: all 0.2s; box-sizing: border-box;
+}
+
+.sidebar-nav a:hover, .sidebar-nav a.active {
+  background-color: #e0e7ff; color: var(--primary);
+}
+
+.section-title {
+  font-size: 0.75rem; text-transform: uppercase; color: #94a3b8;
+  font-weight: 700; margin: 1rem 0 0.5rem 10px;
+}
+
+.divider { height: 1px; background: #e2e8f0; margin: 1rem 0; }
+
+.btn-logout {
+  background: transparent; border: 1px solid #fee2e2; color: #dc2626;
+  margin-top: 1rem; cursor: pointer; text-align: center;
+}
+.btn-logout:hover { background: #fef2f2; }
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+  flex: 1;
+  padding: 0; /* Quitamos padding para que ocupe todo */
+  overflow-y: auto; /* El scroll está aquí */
+  position: relative;
+  width: 100%;
+}
+
+/* Overlay para móvil */
+.overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 30;
+  backdrop-filter: blur(2px);
+}
+
+/* --- MEDIA QUERIES (RESPONSIVE) --- */
+@media (min-width: 1024px) {
+  .lg-hidden { display: none !important; }
+  
+  .sidebar {
+    position: relative; /* En escritorio es relativo (ocupa espacio) */
+    transform: translateX(0); /* Siempre visible */
+    box-shadow: none;
+  }
+}
+/* --- ESTILOS DE LA SECCIÓN DERECHA (USUARIO) --- */
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Espacio entre elementos */
+  padding: 4px 8px;
+  border-radius: 50px;
+  transition: background 0.2s;
+}
+
+.profile-section:hover {
+  background-color: #f8fafc; /* Fondo sutil al pasar el mouse */
+}
+
+/* 1. Etiqueta de Rol */
+.role-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Colores dinámicos según el rol */
+.role-badge.admin {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.role-badge.programmer {
+  background-color: #e0e7ff;
+  color: #3730a3;
+  border: 1px solid #c7d2fe;
+}
+
+.role-badge.user {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+/* 2. Info y Avatar */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Círculo de la foto */
+.avatar-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* 3. Botón Salir */
+.btn-logout-icon {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-logout-icon:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+  transform: translateX(2px); /* Pequeña animación de salida */
+}
+
+/* Botón Login (Cuando no hay usuario) */
+.btn-login {
+  background-color: #4f46e5;
+  color: white;
+  text-decoration: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-login:hover {
+  background-color: #4338ca;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+}
+
+/* Ocultar nombre en celulares muy pequeños */
+@media (max-width: 400px) {
+  .user-name { display: none; }
+}
