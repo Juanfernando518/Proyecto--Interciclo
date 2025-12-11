@@ -1,0 +1,52 @@
+<div class="container fade-in">
+  <div class="header">
+    <h1>📦 Mis Solicitudes</h1>
+    <p>Aquí puedes ver el estado de tus citas con los programadores.</p>
+  </div>
+
+  <div class="requests-grid">
+    @for (req of requests$ | async; track req.id) {
+      
+      <div class="request-card" [class]="req.status">
+        
+        <div class="card-header">
+          <span class="date">{{ req.dateRequest | date:'mediumDate' }} - {{ req.dateRequest | date:'shortTime' }}</span>
+          
+          @if (req.status === 'pending') {
+            <span class="badge pending">⏳ Pendiente</span>
+          } @else if (req.status === 'accepted') {
+            <span class="badge accepted">✅ Aceptada</span>
+          } @else {
+            <span class="badge rejected">❌ Rechazada</span>
+          }
+        </div>
+
+        <h3>{{ req.topic }}</h3>
+        
+        @if (req.adminComment) {
+          <div class="response-box" [class.bg-green]="req.status === 'accepted'">
+            <strong>Respuesta del Programador:</strong>
+            <p>"{{ req.adminComment }}"</p>
+          </div>
+        }
+
+        @if (req.status === 'accepted') {
+          <p class="instruction">
+            👉 El programador ha recibido tu número <strong>{{ req.clientPhone }}</strong> y te contactará pronto por WhatsApp o Correo.
+          </p>
+        }
+
+        @if (req.status === 'pending') {
+          <p class="wait-msg">El experto está revisando tu solicitud.</p>
+        }
+
+      </div>
+
+    } @empty {
+      <div class="empty-state">
+        <p>📭 No tienes solicitudes enviadas.</p>
+        <p>Ve al portafolio de un programador y agenda una cita.</p>
+      </div>
+    }
+  </div>
+</div>

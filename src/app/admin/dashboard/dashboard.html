@@ -1,0 +1,64 @@
+<div class="admin-container fade-in">
+  
+  <header class="admin-header">
+    <h1>🛡️ Panel de Administración</h1>
+    <p>Gestiona los usuarios y roles de la plataforma.</p>
+  </header>
+
+  <div class="table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Email</th>
+          <th>Rol Actual</th>
+          <th>Acciones (Cambiar Rol)</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users$ | async; track user.uid) {
+          <tr>
+            <td>
+              <div class="user-cell">
+                <img [src]="user.photoURL || 'https://ui-avatars.com/api/?name='+user.displayName" class="avatar-sm">
+                <span>{{ user.displayName }}</span>
+              </div>
+            </td>
+            
+            <td class="email-cell">{{ user.email }}</td>
+            
+            <td>
+              <span class="role-badge" [class]="user.role">
+                {{ user.role | uppercase }}
+              </span>
+            </td>
+            
+            <td class="actions-cell">
+              @if (user.role !== 'programmer') {
+                <button (click)="updateRole(user, 'programmer')" class="btn-action btn-blue" title="Ascender a Programador">
+                  👨‍💻 Volver Dev
+                </button>
+              }
+
+              @if (user.role !== 'admin') {
+                <button (click)="updateRole(user, 'admin')" class="btn-action btn-purple" title="Hacer Admin">
+                  🛡️ Hacer Admin
+                </button>
+              }
+
+              @if (user.role !== 'user') {
+                <button (click)="updateRole(user, 'user')" class="btn-action btn-gray" title="Quitar permisos">
+                  ⬇️ Degradar
+                </button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="empty-msg">No hay usuarios registrados.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

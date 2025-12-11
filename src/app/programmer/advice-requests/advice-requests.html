@@ -1,0 +1,124 @@
+<div class="container fade-in">
+  <h1>📬 Solicitudes de Asesoría</h1>
+  <p class="subtitle">Gestiona las peticiones de tus clientes.</p>
+
+  <section class="section-block">
+    <h2>⏳ Pendientes de Aprobación</h2>
+    
+    <div class="advisory-list">
+      @for (item of pending$ | async; track item.id) {
+        <div class="card pending">
+          <div class="card-header">
+            <strong>{{ item.clientName }}</strong>
+            <span class="date">{{ item.dateRequest | date:'medium' }}</span>
+          </div>
+          
+          <div class="card-body">
+            <p class="topic"><strong>Motivo:</strong> {{ item.topic }}</p>
+            <p class="contact">📧 {{ item.clientEmail }}</p>
+          </div>
+
+          <div class="card-actions">
+            <button (click)="openResponse(item)" class="btn-respond">
+              Responder
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <p>🎉 No tienes solicitudes pendientes.</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="section-block mt-4">
+    <h2>🗂️ Historial</h2>
+    
+    <div class="history-table-container">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Tu Respuesta</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of history$ | async; track item.id) {
+            <tr>
+              <td>{{ item.clientName }}</td>
+              <td>{{ item.dateRequest | date:'shortDate' }}</td>
+              <td>
+                <span class="badge" [class]="item.status">
+                  {{ item.status === 'accepted' ? 'Aprobada' : 'Rechazada' }}
+                </span>
+              </td>
+              <td class="comment">{{ item.adminComment }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="text-center">Sin historial.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  @if (selectedAdvisory) {
+  <div class="modal-overlay">
+    <div class="modal-content slide-up">
+      <h3>Gestionar Solicitud</h3>
+      
+      <div class="request-summary">
+        <p><strong>Cliente:</strong> {{ selectedAdvisory.clientName }}</p>
+        <p><strong>Teléfono:</strong> {{ selectedAdvisory.clientPhone || 'No registrado' }}</p>
+        <p><strong>Email:</strong> {{ selectedAdvisory.clientEmail }}</p>
+        <hr class="divider">
+        <p><strong>Motivo:</strong> "{{ selectedAdvisory.topic }}"</p>
+      </div>
+
+      @if (selectedAdvisory.status === 'pending') {
+        <div class="form-group">
+          <label>Mensaje de respuesta:</label>
+          <textarea [(ngModel)]="responseMessage" rows="3"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button (click)="submitResponse('accepted')" class="btn-accept">✅ Aprobar</button>
+          <button (click)="submitResponse('rejected')" class="btn-reject">❌ Rechazar</button>
+          <button (click)="selectedAdvisory = null" class="btn-cancel">Cancelar</button>
+        </div>
+      }
+
+      @if (selectedAdvisory.status === 'accepted') {
+        <div class="contact-actions">
+          <p class="success-msg">✅ ¡Solicitud Aprobada! Contacta al cliente:</p>
+          
+          <div class="btn-row">
+            @if (selectedAdvisory.clientPhone) {
+              <a [href]="getWhatsAppLink(selectedAdvisory)" target="_blank" class="btn-social whatsapp">
+                📲 WhatsApp
+              </a>
+            } @else {
+              <span class="no-phone">⚠️ Sin teléfono registrado</span>
+            }
+
+            <a [href]="getMailLink(selectedAdvisory)" class="btn-social email">
+              ✉️ Enviar Correo
+            </a>
+          </div>
+
+          <button (click)="selectedAdvisory = null" class="btn-close-modal">Cerrar</button>
+        </div>
+      }
+
+    </div>
+  </div>
+  }
+  @if (selectedAdvisory?.status === 'accepted') {
+  <a [href]="getWhatsAppLink(selectedAdvisory!)" target="_blank" class="btn-whatsapp">
+    📲 Enviar Confirmación por WhatsApp
+  </a>
+}
+</div>

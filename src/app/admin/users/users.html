@@ -1,0 +1,70 @@
+<h2>Lista de Programadores</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Foto</th>
+      <th>Nombre</th>
+      <th>Especialidad</th>
+      <th>Descripción</th>
+      <th>Email</th>
+      <th>Rol</th>
+      <th>GitHub</th>
+      <th>LinkedIn</th>
+      <th>Creado</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let p of lista">
+      
+      <!-- ID -->
+      <td>{{ p?.id }}</td>
+
+      <!-- Foto -->
+      <td>
+        <img 
+          [src]="p?.photoUrl || 'assets/no-photo.png'" 
+          width="40" height="40" 
+          style="border-radius: 50%; object-fit: cover;"
+        >
+      </td>
+
+      <!-- Nombre -->
+      <td>{{ p?.name }}</td>
+
+      <!-- Especialidad -->
+      <td>{{ p?.specialty || '---' }}</td>
+
+      <!-- Descripción -->
+      <td>{{ p?.description || '---' }}</td>
+
+      <!-- Email -->
+      <td>{{ p?.email || '---' }}</td>
+
+      <!-- Rol -->
+      <td>{{ p?.role }}</td>
+
+      <!-- GitHub -->
+      <td>
+        <a *ngIf="p?.github" [href]="p.github" target="_blank">
+          {{ p.github }}
+        </a>
+        <span *ngIf="!p?.github">---</span>
+      </td>
+
+      <!-- LinkedIn -->
+      <td>
+        <a *ngIf="p?.linkedin" [href]="p.linkedin" target="_blank">
+          {{ p.linkedin }}
+        </a>
+        <span *ngIf="!p?.linkedin">---</span>
+      </td>
+
+      <!-- Fecha -->
+      <td>{{ p?.createdAt ? (p.createdAt | date:'short') : '---' }}</td>
+
+    </tr>
+  </tbody>
+</table>

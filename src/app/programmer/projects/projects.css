@@ -1,0 +1,35 @@
+.container { padding: 2rem; max-width: 800px; margin: 0 auto; font-family: 'Segoe UI', sans-serif; }
+
+.header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+
+/* Lista */
+.project-item {
+  display: flex; align-items: center; gap: 1rem;
+  background: white; border: 1px solid #e2e8f0;
+  padding: 1rem; margin-bottom: 1rem; border-radius: 8px;
+}
+.thumb { width: 80px; height: 60px; object-fit: cover; border-radius: 4px; background: #f1f5f9; }
+.info { flex: 1; }
+.info h3 { margin: 0 0 5px 0; font-size: 1.1rem; }
+.badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: #e0f2fe; color: #0369a1; }
+.badge.academic { background: #f0fdf4; color: #15803d; }
+.techs { color: #64748b; font-size: 0.85rem; margin: 5px 0 0 0; }
+
+.btn-danger { background: #fee2e2; border: none; padding: 8px; cursor: pointer; border-radius: 4px; font-size: 1.2rem; }
+.btn-danger:hover { background: #fecaca; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+.modal-content { background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; }
+.form-group { margin-bottom: 1rem; display: flex; flex-direction: column; }
+.form-group label { margin-bottom: 5px; font-weight: 500; font-size: 0.9rem; }
+.form-group input, select, textarea { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+.form-row { display: flex; gap: 1rem; }
+.modal-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+.btn-primary { background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+.btn-outline { background: transparent; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 6px; cursor: pointer; }

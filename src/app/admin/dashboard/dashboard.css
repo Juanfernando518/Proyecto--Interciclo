@@ -1,0 +1,79 @@
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.admin-header h1 { color: #1e293b; margin-bottom: 0.5rem; }
+.admin-header p { color: #64748b; }
+
+/* Tabla */
+.table-container {
+  overflow-x: auto; /* Scroll horizontal en móvil */
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px; /* Ancho mínimo para que no se rompa */
+}
+
+.users-table th {
+  background-color: #f8fafc;
+  text-align: left;
+  padding: 1rem;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.users-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+/* Celdas */
+.user-cell { display: flex; align-items: center; gap: 10px; font-weight: 500; color: #334155; }
+.avatar-sm { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.email-cell { color: #64748b; font-size: 0.9rem; }
+
+/* Badges de Rol */
+.role-badge {
+  font-size: 0.7rem; padding: 4px 8px; border-radius: 20px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.role-badge.admin { background: #fee2e2; color: #991b1b; }
+.role-badge.programmer { background: #e0e7ff; color: #3730a3; }
+.role-badge.user { background: #f1f5f9; color: #64748b; }
+
+/* Botones */
+.actions-cell { display: flex; gap: 8px; }
+
+.btn-action {
+  border: none; padding: 6px 12px; border-radius: 6px;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: transform 0.1s;
+}
+.btn-action:hover { transform: translateY(-1px); }
+
+.btn-blue { background: #e0f2fe; color: #0284c7; }
+.btn-blue:hover { background: #bae6fd; }
+
+.btn-purple { background: #f3e8ff; color: #7e22ce; }
+.btn-purple:hover { background: #e9d5ff; }
+
+.btn-gray { background: #f1f5f9; color: #475569; }
+.btn-gray:hover { background: #e2e8f0; }
+
+.fade-in { animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

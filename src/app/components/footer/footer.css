@@ -1,0 +1,88 @@
+.site-footer {
+  background-color: #1e293b; /* Gris muy oscuro */
+  color: #cbd5e1;
+  padding: 3rem 2rem 1rem;
+  font-family: 'Segoe UI', sans-serif;
+  margin-top: auto; /* Truco para que siempre se vaya al fondo */
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+}
+
+.footer-col h3 { color: #fff; margin-bottom: 1rem; }
+.footer-col h4 { color: #fff; margin-bottom: 1rem; font-size: 1.1rem; }
+.footer-col p { line-height: 1.6; font-size: 0.9rem; }
+
+.footer-col ul { list-style: none; padding: 0; }
+.footer-col ul li { margin-bottom: 0.5rem; }
+.footer-col ul li a { color: #cbd5e1; text-decoration: none; transition: color 0.2s; }
+.footer-col ul li a:hover { color: #4f46e5; }
+
+.footer-bottom {
+  border-top: 1px solid #334155;
+  padding-top: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.social-icons a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; }
+
+@media (min-width: 768px) {
+  .footer-bottom { flex-direction: row; justify-content: space-between; }
+}.site-footer {
+  background-color: #1e293b; /* Gris muy oscuro */
+  color: #cbd5e1;
+  padding: 3rem 2rem 1rem;
+  font-family: 'Segoe UI', sans-serif;
+  margin-top: auto; /* Truco para que siempre se vaya al fondo */
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+}
+
+.footer-col h3 { color: #fff; margin-bottom: 1rem; }
+.footer-col h4 { color: #fff; margin-bottom: 1rem; font-size: 1.1rem; }
+.footer-col p { line-height: 1.6; font-size: 0.9rem; }
+
+.footer-col ul { list-style: none; padding: 0; }
+.footer-col ul li { margin-bottom: 0.5rem; }
+.footer-col ul li a { color: #cbd5e1; text-decoration: none; transition: color 0.2s; }
+.footer-col ul li a:hover { color: #4f46e5; }
+
+.footer-bottom {
+  border-top: 1px solid #334155;
+  padding-top: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.social-icons a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; }
+
+@media (min-width: 768px) {
+  .footer-bottom { flex-direction: row; justify-content: space-between; }
+}
+.footer-logo {
+  width: 100px;        /* Cambia este valor: 50px, 100px, 150px... */
+  height: 80px;       /* Si quieres que sea cuadrada exacta */
+  object-fit: contain; /* Evita que la imagen se deforme o estire */
+  border-radius: 8px; /* Opcional: bordes redondeados */
+  margin-bottom: 10px;
+}

@@ -1,0 +1,101 @@
+<div class="edit-container fade-in">
+  
+  <div class="edit-card">
+    <div class="card-header">
+      <h2>✏️ Editar Perfil</h2>
+      <p>Mantén tu información actualizada para atraer más clientes.</p>
+    </div>
+
+    <form (ngSubmit)="saveProfile()">
+      
+      <div class="profile-header-section">
+        
+        <div class="photo-preview-wrapper">
+          <img [src]="userProfile.photoURL || 'https://ui-avatars.com/api/?name='+userProfile.displayName" 
+               class="avatar-preview" 
+               alt="Preview">
+        </div>
+
+        <div class="main-inputs">
+          <div class="form-group">
+            <label>Foto de Perfil (URL)</label>
+            <input type="text" [(ngModel)]="userProfile.photoURL" name="photo" class="input-modern" placeholder="https://...">
+            <small>Recomendación: Usa el link de tu foto de LinkedIn o GitHub.</small>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nombre Completo</label>
+              <input type="text" [(ngModel)]="userProfile.displayName" name="name" class="input-modern" required>
+            </div>
+            
+            <div class="form-group">
+              <label>Especialidad</label>
+              <input type="text" [(ngModel)]="userProfile.specialty" name="specialty" class="input-modern" placeholder="Ej: Fullstack Developer">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="form-group">
+        <label>Sobre Mí (Biografía)</label>
+        <textarea [(ngModel)]="userProfile.description" name="desc" rows="4" class="input-modern textarea" placeholder="Cuéntanos tu experiencia, tecnologías que dominas..."></textarea>
+      </div>
+
+      <hr class="divider">
+
+      <h3>🌐 Redes de Contacto</h3>
+      <div class="social-grid">
+        
+        <div class="form-group">
+          <label>GitHub</label>
+          <div class="input-icon">
+            <span class="icon">🐙</span>
+            <input type="text" 
+                   [ngModel]="userProfile.socialLinks?.github" 
+                   (ngModelChange)="userProfile.socialLinks = userProfile.socialLinks || {}; userProfile.socialLinks!.github = $event"
+                   name="github" 
+                   class="input-modern" 
+                   placeholder="Link de GitHub">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>LinkedIn</label>
+          <div class="input-icon">
+            <span class="icon">💼</span>
+            <input type="text" 
+                   [ngModel]="userProfile.socialLinks?.linkedin" 
+                   (ngModelChange)="userProfile.socialLinks = userProfile.socialLinks || {}; userProfile.socialLinks!.linkedin = $event"
+                   name="linkedin" 
+                   class="input-modern" 
+                   placeholder="Link de LinkedIn">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <div class="input-icon">
+            <span class="icon">📱</span>
+            <input type="text" 
+                   [ngModel]="userProfile.socialLinks?.whatsapp" 
+                   (ngModelChange)="userProfile.socialLinks = userProfile.socialLinks || {}; userProfile.socialLinks!.whatsapp = $event"
+                   name="whatsapp" 
+                   class="input-modern" 
+                   placeholder="Número o Link wa.me">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-save" [disabled]="isLoading">
+          {{ isLoading ? 'Guardando...' : '💾 Guardar Cambios' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

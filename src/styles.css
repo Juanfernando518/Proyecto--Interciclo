@@ -1,0 +1,15 @@
+/* --- RESET GLOBAL --- */
+/* Esto es fundamental: hace que el padding no aumente el ancho de las cajas */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  /* Evita el scroll horizontal en toda la app */
+  overflow-x: hidden;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f8fafc; /* Un fondo gris muy suave para toda la app */
+}/* You can add global styles to this file, and also import other style files */
