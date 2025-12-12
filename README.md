@@ -2,8 +2,7 @@
   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0xScveNFCW3xZWdROhdo491JguVTqCngLFA&s" alt="Logo Universidad" width="180"/>
 </p>
 ## **EQUIPO DEL PROYECTO**
-https://github.com/Juanfernando518/Proyecto--Interciclo/blob/main/Imagen1.png
-
+https://github.com/Juanfernando518/Proyecto--Interciclo/blob/main/Imagen1.png?raw=true
 ## **Integrantes**
 
 **Git Proyecto**: https://github.com/Juanfernando518/Proyecto--Interciclo.git
