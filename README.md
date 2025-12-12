@@ -1,4 +1,6 @@
-![alt text](image.png)
+<p align="center">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0xScveNFCW3xZWdROhdo491JguVTqCngLFA&s" alt="Logo Universidad" width="180"/>
+</p>
 ## **EQUIPO DEL PROYECTO**
 ![alt text](Imagen1.png)
 
