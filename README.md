@@ -421,42 +421,243 @@ Se muestran algunos fragmentos clave utilizados dentro del sistema para manejar 
 **Envío Automático de Correos (EmailJS)**
 
  ```bash
-import emailjs from "@emailjs/browser";
 
-emailjs.send(
-  "service_id",
-  "template_id",
-  {
-    programmer_name: data.programmer,
-    requester_name: data.user,
-    date_time: data.fecha,
-    comment: data.comentario
-  },
-  "public_key"
-);
+loginGoogle() {
+    this.authService.loginWithGoogle();
+  }
+
+  async loginEmail() {
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Por favor completa ambos campos';
+      return;
+    }
+
+    try {
+      await this.authService.loginWithEmail(this.email, this.password);
+    } catch (error: any) {
+      // Manejo simple de errores
+      if (error.code === 'auth/invalid-credential') {
+        this.errorMessage = 'Correo o contraseña incorrectos';
+      } else {
+        this.errorMessage = 'Ocurrió un error al intentar ingresar';
+      }
+    }
+  }
+}
 
   ```
   **Guardado de Solicitudes en Firebase (Firestore)**
 
   ```bash
+import { Injectable, inject } from '@angular/core';
+import { Firestore, collection, collectionData, doc, docData, setDoc, updateDoc, deleteDoc, query, where, addDoc } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import {  Project, Advisory } from '../models/models';
+import {  AppUser } from '../models/models';
 
-  import { addDoc, collection } from "@angular/fire/firestore";
 
-await addDoc(collection(this.firestore, "solicitudes"), {
-  usuario: user.uid,
-  programador: programmer.id,
-  fecha: fecha,
-  comentario: comentario,
-  estado: "pendiente"
-});
+@Injectable({ providedIn: 'root' })
+export class FirestoreService {
+  private firestore = inject(Firestore);
+
+  // --- USUARIOS ---
+
+  // Obtener todos los usuarios (Para el Admin Dashboard)
+  getAllUsers(): Observable<AppUser[]> {
+    const usersRef = collection(this.firestore, 'users');
+    return collectionData(usersRef, { idField: 'uid' }) as Observable<AppUser[]>;
+  }
+  // Obtener datos de UN usuario específico por su ID
+getUser(uid: string): Observable<AppUser> {
+  const userDoc = doc(this.firestore, `users/${uid}`);
+  return docData(userDoc) as Observable<AppUser>;
+}
+
+  // Obtener solo los programadores (Para la Home Page)
+  getProgrammers(): Observable<AppUser[]> {
+    const usersRef = collection(this.firestore, 'users');
+    const q = query(usersRef, where('role', '==', 'programmer'));
+    return collectionData(q, { idField: 'uid' }) as Observable<AppUser[]>;
+  }
+
+  // Actualizar perfil (Cambiar rol o editar datos de programador)
+  updateUser(uid: string, data: Partial<AppUser>) {
+    const userDoc = doc(this.firestore, `users/${uid}`);
+    return updateDoc(userDoc, data);
+  }
+
+  // --- PROYECTOS ---
+
+  // Obtener proyectos de un programador específico
+  getProjectsByProgrammer(programmerId: string): Observable<Project[]> {
+    const projectsRef = collection(this.firestore, 'projects');
+    const q = query(projectsRef, where('programmerId', '==', programmerId));
+    return collectionData(q, { idField: 'id' }) as Observable<Project[]>;
+  }
+
+  // Crear proyecto
+  addProject(project: Project) {
+    const projectsRef = collection(this.firestore, 'projects');
+    return addDoc(projectsRef, project);
+  }
+
+  // Eliminar proyecto
+  deleteProject(projectId: string) {
+    const projectDoc = doc(this.firestore, `projects/${projectId}`);
+    return deleteDoc(projectDoc);
+  }
+  // Actualizar un proyecto existente
+updateProject(projectId: string, data: Partial<Project>) {
+  const projectDoc = doc(this.firestore, `projects/${projectId}`);
+  return updateDoc(projectDoc, data);
+}
+
+  // --- ASESORÍAS ---
+
+  // Crear solicitud de asesoría
+  requestAdvisory(advisory: Advisory) {
+    const advisoryRef = collection(this.firestore, 'advisories');
+    return addDoc(advisoryRef, advisory);
+  }
+
+ // Asegúrate de importar Advisory y updateDoc en la parte superior
+
+// 1. Obtener las asesorías dirigidas a un programador específico
+getAdvisoriesForProgrammer(programmerId: string): Observable<Advisory[]> {
+  const advisoryRef = collection(this.firestore, 'advisories');
+  // Filtramos donde 'programmerId' coincida con el usuario actual
+  const q = query(advisoryRef, where('programmerId', '==', programmerId));
+  // Ordenar por fecha sería ideal, pero requiere índices compuestos. Por ahora simple.
+  return collectionData(q, { idField: 'id' }) as Observable<Advisory[]>;
+}
+
+// 2. Responder (Aprobar/Rechazar)
+updateAdvisoryStatus(advisoryId: string, status: 'accepted' | 'rejected', adminComment: string) {
+  const advisoryDoc = doc(this.firestore, `advisories/${advisoryId}`);
+  return updateDoc(advisoryDoc, { 
+    status, 
+    adminComment 
+  });
+}
+// Obtener asesorías pedidas por un CLIENTE
+getAdvisoriesForClient(clientId: string): Observable<Advisory[]> {
+  const advisoryRef = collection(this.firestore, 'advisories');
+  // Filtramos donde 'clientId' sea igual al usuario actual
+  const q = query(advisoryRef, where('clientId', '==', clientId));
+  // Ordenar por fecha idealmente (requiere índice), por ahora así:
+  return collectionData(q, { idField: 'id' }) as Observable<Advisory[]>;
+}
+}
 ```
 
 **Registro  de Notificación por WhatsApp**
 ```bash
-this.firestore.updateDoc(`solicitudes/${id}`, {
-  whatsappNotified: true,
-  mensaje: "El programador ha recibido tu solicitud vía WhatsApp."
-});
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Advisory } from '../../core/models/models';
+import { Observable, map, of } from 'rxjs';
+import { FirestoreService } from '../../core/services/firestoreService';
+import { AuthService } from '../../core/services/auth';
+
+@Component({
+  selector: 'app-advisories',
+  standalone: true,
+  imports: [CommonModule, FormsModule], // Importante
+  templateUrl: './advice-requests.html',
+  styleUrls: ['./advice-requests.css']
+})
+export class AdviceRequests {
+  private firestoreService = inject(FirestoreService);
+  private authService = inject(AuthService);
+
+  // Dos listas: Pendientes y Revisadas
+  pending$: Observable<Advisory[]>;
+  history$: Observable<Advisory[]>;
+
+  // Para el modal de respuesta
+  selectedAdvisory: Advisory | null = null;
+  responseMessage = ''; // Comentario obligatorio al rechazar/aceptar
+
+  constructor() {
+    const user = this.authService.currentUser();
+    
+    if (user) {
+      // Obtenemos TODAS las asesorías
+      const all$ = this.firestoreService.getAdvisoriesForProgrammer(user.uid);
+
+      // Filtramos las 'pending'
+      this.pending$ = all$.pipe(
+        map(list => list.filter(a => a.status === 'pending'))
+      );
+
+      // Filtramos las que ya NO son 'pending' (accepted/rejected)
+      this.history$ = all$.pipe(
+        map(list => list.filter(a => a.status !== 'pending'))
+      );
+    } else {
+      this.pending$ = of([]);
+      this.history$ = of([]);
+    }
+  }
+
+  // Abrir modal para responder
+  openResponse(advisory: Advisory) {
+    this.selectedAdvisory = advisory;
+    this.responseMessage = ''; // Limpiar mensaje
+  }
+
+  // Enviar la decisión
+  async submitResponse(status: 'accepted' | 'rejected') {
+    if (!this.selectedAdvisory?.id) return;
+    
+    if (!this.responseMessage.trim()) {
+      alert('Por favor escribe un mensaje para el cliente.');
+      return;
+    }
+
+    try {
+      await this.firestoreService.updateAdvisoryStatus(
+        this.selectedAdvisory.id,
+        status,
+        this.responseMessage
+      );
+      
+      if (status === 'accepted') {
+        // CASO 1: APROBADO
+        // NO cerramos el modal (no hacemos selectedAdvisory = null)
+        // Actualizamos el estado localmente para que el HTML muestre los botones de WhatsApp
+        this.selectedAdvisory.status = 'accepted'; 
+        alert('Solicitud APROBADA. Ahora puedes contactar al cliente.');
+      } else {
+        // CASO 2: RECHAZADO
+        // Aquí sí cerramos el modal inmediatamente
+        alert('Solicitud RECHAZADA.');
+        this.selectedAdvisory = null; 
+      }
+      
+    } catch (error) {
+      console.error(error);
+      alert('Error al actualizar');
+    }
+  }
+  getWhatsAppLink(advisory: Advisory): string {
+    if (!advisory.clientPhone) return '#'; // Si no dio teléfono, no hace nada
+    
+    const text = `Hola ${advisory.clientName}, soy el programador. He ACEPTADO tu solicitud de asesoría sobre "${advisory.topic}". Nos vemos el ${new Date(advisory.dateRequest).toLocaleString()}.`;
+    
+    // Formato universal para WhatsApp Web/App
+    return `https://wa.me/${advisory.clientPhone}?text=${encodeURIComponent(text)}`;
+  }
+  // GENERAR LINK DE CORREO (MAILTO)
+  getMailLink(advisory: Advisory): string {
+    const subject = `Confirmación de Asesoría: ${advisory.topic}`;
+    const body = `Hola ${advisory.clientName},\n\nHe aceptado tu solicitud de asesoría para la fecha: ${new Date(advisory.dateRequest).toLocaleString()}.\n\nSaludos cordiales.`;
+    
+    return `mailto:${advisory.clientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+}
+
 ```
 ##  **Conclusiones**
 
