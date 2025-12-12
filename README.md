@@ -1,8 +1,11 @@
 <p align="center">
   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0xScveNFCW3xZWdROhdo491JguVTqCngLFA&s" alt="Logo Universidad" width="180"/>
 </p>
+
 ## **EQUIPO DEL PROYECTO**
-https://github.com/Juanfernando518/Proyecto--Interciclo/blob/main/Imagen1.png?raw=true
+
+<img src="https://github.com/Juanfernando518/Proyecto--Interciclo/blob/f48946d9546701e6edf57f1ef45d6383e8518b99/Imagen1.png">
+
 ## **Integrantes**
 
 **Git Proyecto**: https://github.com/Juanfernando518/Proyecto--Interciclo.git
@@ -25,8 +28,6 @@ https://github.com/Juanfernando518/Proyecto--Interciclo/blob/main/Imagen1.png?ra
  Se utilizó para construir toda la interfaz del usuario, las rutas, componentes, servicios, guardas de autenticación y todo el consumo hacia Firebase.
 
  **Firebase**
-
-<img src="https://www.gstatic.com/mobilesdk/240310_mobilesdk/logo/2x/firebase_96dp.png" width="90">
 
 Firebase se empleó como backend serverless para:
 
