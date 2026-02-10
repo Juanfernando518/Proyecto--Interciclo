@@ -1,13 +1,28 @@
-@if (programmer$ | async; as dev) {
+@if (programmer; as dev) {
 
 <div class="portfolio-container fade-in">
 
   <header class="profile-header">
-    <img [src]="dev.photoURL || 'https://ui-avatars.com/api/?name='+dev.displayName" class="avatar-lg">
+    <img [src]="dev.fotoPerfil || 'https://ui-avatars.com/api/?name=' + dev.nombre + '&background=random&size=128'" 
+         class="avatar-lg" 
+         [alt]="dev.nombre"
+         (error)="imgHeader.src='https://ui-avatars.com/api/?name=' + dev.nombre + '&background=random&size=128'"
+         #imgHeader>
+
     <div class="profile-info">
-      <h1>{{ dev.displayName }}</h1>
-      <span class="badge">{{ dev.specialty || 'Programador' }}</span>
-      <p>{{ dev.description || 'Sin descripción disponible.' }}</p>
+      <h1>{{ dev.nombre }}</h1>
+      <span class="badge">{{ dev.especialidad || 'Programador Full Stack' }}</span>
+      <p>{{ dev.descripcion || 'Listo para ayudarte en tu próximo proyecto.' }}</p>
+
+      <div class="availability-info">
+        <p>🕒 <strong>Horario:</strong> {{ dev.horario || 'Agenda Abierta' }}</p>
+        <p>🌍 <strong>Modalidad:</strong>
+          <span class="badge-mode" [class.virtual]="dev.modalidad === 'VIRTUAL'"
+            [class.presencial]="dev.modalidad === 'PRESENCIAL'">
+            {{ dev.modalidad || 'Virtual' }}
+          </span>
+        </p>
+      </div>
     </div>
   </header>
 
@@ -23,16 +38,19 @@
   @if (activeTab === 'projects') {
   <section class="content-section">
     <div class="projects-grid">
-      @for (proj of projects$ | async; track proj) {
+      @for (proj of projects; track proj.id) {
       <div class="project-card">
-        <div class="proj-img"
-          [style.backgroundImage]="'url(' + (proj.imageUrl || 'https://via.placeholder.com/300') + ')'"></div>
+        <div class="proj-img" 
+             [style.backgroundImage]="'url(' + (proj.imagenUrl || 'assets/default-project.jpg') + ')'">
+        </div>
+
         <div class="proj-body">
-          <h3>{{ proj.title }}</h3>
-          <p>{{ proj.description }}</p>
+          <h3>{{ proj.nombre }}</h3>
+          <p>{{ proj.descripcion }}</p>
+
           <div class="proj-links">
-            @if (proj.repoUrl) { <a [href]="proj.repoUrl" target="_blank">Código</a> }
-            @if (proj.demoUrl) { <a [href]="proj.demoUrl" target="_blank">Demo</a> }
+            @if (proj.repoUrl) { <a [href]="proj.repoUrl" target="_blank" class="link-btn">GitHub</a> }
+            @if (proj.deployUrl) { <a [href]="proj.deployUrl" target="_blank" class="link-btn primary">Demo</a> }
           </div>
         </div>
       </div>
@@ -49,42 +67,50 @@
   <section id="advisory-section" class="content-section">
     <div class="advisory-card">
       <h2>Solicitar Asesoría</h2>
-      <p>Reserva una sesión con {{ dev.displayName }}.</p>
+      <p>Reserva una sesión 1 a 1 con {{ dev.nombre }}.</p>
 
       @if (authService.currentUser()) {
 
-      @if (!showForm) {
-      <button (click)="showForm = true" class="btn-primary full-width animate-bounce">
-        Solicitar una Cita Ahora
-      </button>
-      }
-
-      @if (showForm) {
       <div class="form-container fade-in">
+
         <div class="form-group">
-          <label>Motivo</label>
-          <input type="text" [(ngModel)]="topic" placeholder="Ej: Revisión de código...">
-        </div>
-        <div class="form-group">
-          <label>Tu Teléfono (WhatsApp)</label>
-          <input type="tel" [(ngModel)]="clientPhone" placeholder="Ej: 593991234567 (Con código de país)">
+          <label>Motivo de la consulta</label>
+          <input type="text" [(ngModel)]="topic" placeholder="Ej: Revisión de código Java..." class="form-control">
         </div>
 
         <div class="form-group">
-          <label>Fecha y Hora</label>
-          <input type="datetime-local" [(ngModel)]="dateRequest">
+            <label>Tu Teléfono (WhatsApp)</label>
+            
+            <div class="phone-input-group">
+              <div class="country-badge">
+                <span>🇪🇨 +593</span>
+              </div>
+              
+              <input type="tel" 
+                     [(ngModel)]="clientPhone" 
+                     placeholder="99 123 4567" 
+                     class="form-control"
+                     maxlength="9">
+            </div>
+            <small class="helper-text">Ingresa tu número sin el cero inicial.</small>
+          </div>
+
+        <div class="form-group">
+          <label>Fecha y Hora deseada</label>
+          <input type="datetime-local" [(ngModel)]="dateRequest" class="form-control">
+          <small style="color: #64748b; font-size: 0.8rem; display: block; margin-top: 5px;">
+            ⚠️ Por favor verifica el horario del experto arriba antes de seleccionar.
+          </small>
         </div>
 
         <div class="form-actions">
-          <button (click)="requestAdvisory(dev.uid)" class="btn-primary">Enviar Solicitud</button>
-          <button (click)="showForm = false" class="btn-outline">Cancelar</button>
+          <button (click)="requestAdvisory()" class="btn-primary full-width">🚀 Enviar Solicitud</button>
         </div>
       </div>
-      }
 
       } @else {
       <div class="login-alert">
-        <p>🔒 Debes iniciar sesión para agendar.</p>
+        <p>🔒 Debes iniciar sesión para agendar una cita.</p>
         <a routerLink="/auth/login" class="btn-primary">Ir al Login</a>
       </div>
       }
@@ -95,4 +121,8 @@
 
 </div>
 
+} @else {
+<div class="loading-container">
+  <p>Cargando perfil...</p>
+</div>
 }

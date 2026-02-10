@@ -1,101 +1,109 @@
-<div class="edit-container fade-in">
+<div class="profile-container fade-in">
   
-  <div class="edit-card">
-    <div class="card-header">
-      <h2>✏️ Editar Perfil</h2>
-      <p>Mantén tu información actualizada para atraer más clientes.</p>
-    </div>
+  <header class="header">
+    <h1>✏️ Editar Perfil</h1>
+    <p>Mantén tu información actualizada para atraer más clientes.</p>
+  </header>
 
-    <form (ngSubmit)="saveProfile()">
+  <div class="profile-card">
+    
+    <div class="form-section">
+      <h3>👤 Información Básica</h3>
       
-      <div class="profile-header-section">
-        
-        <div class="photo-preview-wrapper">
-          <img [src]="userProfile.photoURL || 'https://ui-avatars.com/api/?name='+userProfile.displayName" 
-               class="avatar-preview" 
-               alt="Preview">
-        </div>
-
-        <div class="main-inputs">
-          <div class="form-group">
-            <label>Foto de Perfil (URL)</label>
-            <input type="text" [(ngModel)]="userProfile.photoURL" name="photo" class="input-modern" placeholder="https://...">
-            <small>Recomendación: Usa el link de tu foto de LinkedIn o GitHub.</small>
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Nombre Completo</label>
-              <input type="text" [(ngModel)]="userProfile.displayName" name="name" class="input-modern" required>
-            </div>
-            
-            <div class="form-group">
-              <label>Especialidad</label>
-              <input type="text" [(ngModel)]="userProfile.specialty" name="specialty" class="input-modern" placeholder="Ej: Fullstack Developer">
-            </div>
-          </div>
-        </div>
+      <div class="form-group">
+        <label>Nombre Completo</label>
+        <input type="text" [(ngModel)]="usuario.nombre" placeholder="Tu nombre profesional">
       </div>
-
-      <hr class="divider">
 
       <div class="form-group">
-        <label>Sobre Mí (Biografía)</label>
-        <textarea [(ngModel)]="userProfile.description" name="desc" rows="4" class="input-modern textarea" placeholder="Cuéntanos tu experiencia, tecnologías que dominas..."></textarea>
+        <label>Especialidad (Título)</label>
+        <input type="text" [(ngModel)]="usuario.especialidad" placeholder="Ej: Desarrollador Full Stack Java">
+        <small>Esto aparecerá debajo de tu nombre.</small>
       </div>
 
-      <hr class="divider">
+      <div class="form-group">
+        <label>Sobre Mí (Descripción)</label>
+        <textarea [(ngModel)]="usuario.descripcion" rows="4" placeholder="Cuenta tu experiencia y qué tecnologías dominas..."></textarea>
+      </div>
+      
+      <div class="form-group">
+          <label>🕒 Horario de Disponibilidad</label>
+          <input type="text" 
+                 [(ngModel)]="usuario.horario" 
+                 name="horario" 
+                 class="form-control" 
+                 placeholder="Ej: Lun-Vie 14:00 - 18:00">
+      </div>
 
-      <h3>🌐 Redes de Contacto</h3>
-      <div class="social-grid">
+      <div class="form-group">
+        <label>💻 Modalidad de Trabajo</label>
+        <select [(ngModel)]="usuario.modalidad" name="modalidad" class="form-control">
+          <option value="VIRTUAL">100% Virtual</option>
+          <option value="PRESENCIAL">Presencial</option>
+          <option value="HIBRIDO">Híbrido (Ambos)</option>
+        </select>
+      </div>
+      
+    <div class="form-group photo-upload-section">
+        <label>Foto de Perfil</label>
         
-        <div class="form-group">
-          <label>GitHub</label>
-          <div class="input-icon">
-            <span class="icon">🐙</span>
+        <div class="photo-preview-container">
+          <img [src]="usuario.fotoPerfil" 
+               (error)="img.src='https://ui-avatars.com/api/?name=' + (usuario.nombre || 'Usuario') + '&background=random&size=128'"
+               alt="Vista previa" 
+               class="avatar-preview"
+               #img>
+          
+          <div class="input-wrapper">
             <input type="text" 
-                   [ngModel]="userProfile.socialLinks?.github" 
-                   (ngModelChange)="userProfile.socialLinks = userProfile.socialLinks || {}; userProfile.socialLinks!.github = $event"
-                   name="github" 
-                   class="input-modern" 
-                   placeholder="Link de GitHub">
+                   [(ngModel)]="usuario.fotoPerfil" 
+                   placeholder="Pega aquí el enlace de tu foto..." 
+                   class="form-control">
+                   
+            <small class="helper-text">
+              💡 Tip: Si no tienes foto, borra el texto y se generará un avatar con tus iniciales.
+            </small>
           </div>
+        </div>
+      </div>
+    <hr>
+
+    <div class="form-section">
+      <h3>🌐 Redes Sociales</h3>
+      
+      <div class="grid-2">
+        <div class="form-group">
+          <label><i class="fab fa-github"></i> GitHub (Link)</label>
+          <input type="text" [(ngModel)]="usuario.github" placeholder="https://github.com/...">
         </div>
 
         <div class="form-group">
-          <label>LinkedIn</label>
-          <div class="input-icon">
-            <span class="icon">💼</span>
-            <input type="text" 
-                   [ngModel]="userProfile.socialLinks?.linkedin" 
-                   (ngModelChange)="userProfile.socialLinks = userProfile.socialLinks || {}; userProfile.socialLinks!.linkedin = $event"
-                   name="linkedin" 
-                   class="input-modern" 
-                   placeholder="Link de LinkedIn">
-          </div>
+          <label><i class="fab fa-linkedin"></i> LinkedIn (Link)</label>
+          <input type="text" [(ngModel)]="usuario.linkedin" placeholder="https://linkedin.com/in/...">
         </div>
-
-        <div class="form-group">
-          <label>WhatsApp</label>
-          <div class="input-icon">
-            <span class="icon">📱</span>
-            <input type="text" 
-                   [ngModel]="userProfile.socialLinks?.whatsapp" 
-                   (ngModelChange)="userProfile.socialLinks = userProfile.socialLinks || {}; userProfile.socialLinks!.whatsapp = $event"
-                   name="whatsapp" 
-                   class="input-modern" 
-                   placeholder="Número o Link wa.me">
-          </div>
-        </div>
-
       </div>
 
-      <div class="form-actions">
-        <button type="submit" class="btn-save" [disabled]="isLoading">
-          {{ isLoading ? 'Guardando...' : '💾 Guardar Cambios' }}
-        </button>
+      <div class="form-group highlight-group">
+        <label>📱 Número de WhatsApp (Importante para Citas)</label>
+        <input type="text" [(ngModel)]="usuario.whatsapp" placeholder="Ej: 593991234567">
+        <small>Este número se compartirá con el cliente cuando ACEPTES una cita.</small>
       </div>
+    </div>
 
-    </form>
+    <div class="actions">
+      @if (mensaje) {
+        <p class="msg-success">{{ mensaje }}</p>
+      }
+      
+      <button (click)="guardarCambios()" [disabled]="loading" class="btn-save">
+        @if (!loading) {
+          <span>💾 Guardar Cambios</span>
+        }
+        @if (loading) {
+          <span>Guardando...</span>
+        }
+      </button>
+    </div>
+
   </div>
 </div>

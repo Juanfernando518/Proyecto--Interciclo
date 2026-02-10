@@ -1,43 +1,44 @@
+import { Component, inject, effect } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { Footer } from '../../components/footer/footer';
 import { AuthService } from '../services/auth';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterModule, CommonModule,Footer],
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './layout.html',
-  styleUrls: ['./layout.css'],
-  standalone: true
+  styleUrls: ['./layout.css']
 })
 export class Layout {
-authService = inject(AuthService);
+  private authService = inject(AuthService);
   private router = inject(Router);
+  
+  rol: string = '';
 
-  // Controla si el menú lateral está abierto en móvil
-  isSidebarOpen = signal(false);
-
-  // Obtener usuario actual (Signal)
-  currentUser = this.authService.currentUser;
-
-  toggleSidebar() {
-    this.isSidebarOpen.update(val => !val);
+  constructor() {
+    // Escuchamos cambios en el usuario al instante
+    effect(() => {
+      const user = this.authService.currentUser();
+      
+      if (user && user.rol) {
+        // Limpiamos el rol igual que en el Guard
+        this.rol = String(user.rol)
+                    .replace('ROLE_', '')
+                    .replace('[', '')
+                    .replace(']', '')
+                    .toUpperCase()
+                    .trim();
+        console.log('Layout actualizó rol a:', this.rol);
+      } else {
+        this.rol = '';
+      }
+    });
   }
 
-  closeSidebar() {
-    this.isSidebarOpen.set(false);
-  }
-
-  async logout() {
-    if (confirm('¿Cerrar sesión?')) {
-      await this.authService.logout();
-      this.closeSidebar();
-    }
-  }
-
-  // Obtener inicial del correo para el avatar
-  get initial(): string {
-    return this.currentUser()?.email?.charAt(0).toUpperCase() || '?';
+ logout() {
+    this.authService.logout();
+    this.rol = ''; // <--- CORRECCIÓN: String vacío en vez de null
+    this.router.navigate(['/']); 
   }
 }

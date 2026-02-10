@@ -2,9 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { AppUser, Project, Advisory } from '../../core/models/models'; // Tu ruta correcta
-import { FirestoreService } from '../../core/services/firestoreService';
+import { ApiBackendService } from '../../services/api-backend';
 import { AuthService } from '../../core/services/auth';
 
 @Component({
@@ -16,35 +14,26 @@ import { AuthService } from '../../core/services/auth';
 })
 export class Portfolios implements OnInit {
   private route = inject(ActivatedRoute);
-  private firestoreService = inject(FirestoreService);
+  private api = inject(ApiBackendService);
   public authService = inject(AuthService);
 
-  programmer$: Observable<AppUser | undefined>;
-  projects$: Observable<Project[]>;
-
-  // ESTA ES LA CLAVE: Controla qué se muestra. Por defecto 'projects'
+  programmer: any = null;
+  projects: any[] = [];
   activeTab: 'projects' | 'advisory' = 'projects';
 
- 
-  showForm = false; // Controla si se ve el formulario
-  topic = '';       // Para el input del motivo
-  dateRequest = ''; // Para el input de fecha
-  clientPhone = ''; //telefono
-  // ----------------------------------------
-
-  constructor() {
-    const programmerId = this.route.snapshot.paramMap.get('id');
-    if (programmerId) {
-      this.programmer$ = this.firestoreService.getUser(programmerId);
-      this.projects$ = this.firestoreService.getProjectsByProgrammer(programmerId);
-    } else {
-      this.programmer$ = of(undefined);
-      this.projects$ = of([]);
-    }
-  }
+  showForm = false;
+  topic = '';       
+  dateRequest = ''; 
+  clientPhone = ''; 
 
   ngOnInit() {
-    // Escuchamos la URL para saber qué botón aplastaron en el Home
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const programmerId = Number(idParam);
+
+    if (programmerId) {
+      this.cargarDatos(programmerId);
+    }
+
     this.route.queryParams.subscribe(params => {
       if (params['tab'] === 'advisory') {
         this.activeTab = 'advisory';
@@ -54,36 +43,80 @@ export class Portfolios implements OnInit {
     });
   }
 
-  // Función para cambiar de pestaña manualmente (click en los botones de arriba)
+  cargarDatos(id: number) {
+    this.api.obtenerUsuario(id).subscribe({
+      next: (data: any) => this.programmer = data,
+      error: (e: any) => console.error('Error cargando perfil:', e)
+    });
+
+    this.api.obtenerProyectosPorUsuario(id).subscribe({
+      next: (data: any) => this.projects = data,
+      error: (e: any) => console.error('Error cargando proyectos:', e)
+    });
+  }
+
   setTab(tab: 'projects' | 'advisory') {
     this.activeTab = tab;
   }
 
-  async requestAdvisory(programmerId: string) {
-    // ... (Tu código de guardar cita sigue igual) ...
+  requestAdvisory() {
     const currentUser = this.authService.currentUser();
+    
+    // 1. Validaciones básicas
     if (!currentUser) { 
-        alert("Inicia sesión primero"); 
+        alert("Debes iniciar sesión para agendar una cita."); 
         return; 
     }
 
-    const newAdvisory: Advisory = {
-      programmerId: programmerId,
-      clientId: currentUser.uid,
-      clientName: currentUser.displayName,
-      clientEmail: currentUser.email,
-      clientPhone: this.clientPhone,
-      topic: this.topic,
-      dateRequest: new Date(this.dateRequest).toISOString(),
-      status: 'pending'
+    if (!this.topic || !this.dateRequest || !this.clientPhone) {
+      alert("Por favor completa el tema, la fecha y tu teléfono.");
+      return;
+    }
+
+    // 2. Lógica del Teléfono (Nuevo)
+    // Quitamos espacios y si empieza con '0', lo quitamos.
+    let numeroLimpio = this.clientPhone.toString().replace(/\s/g, ''); 
+    if (numeroLimpio.startsWith('0')) {
+        numeroLimpio = numeroLimpio.substring(1);
+    }
+    // Agregamos el prefijo de Ecuador
+    const numeroFinal = '593' + numeroLimpio;
+
+    // 3. Formateo de Fecha (Para Java)
+    let fechaFormateada = this.dateRequest; 
+    if (fechaFormateada.length === 16) { // Si viene como "yyyy-MM-ddThh:mm"
+        fechaFormateada += ":00"; // Le agregamos los segundos
+    }
+
+    // 4. Crear el objeto para enviar
+    const nuevaCita = {
+      programadorId: this.programmer.id,
+      tema: this.topic,
+      celular: numeroFinal, // Enviamos el número con 593
+      fecha: fechaFormateada
     };
 
-    try {
-      await this.firestoreService.requestAdvisory(newAdvisory);
-      alert('Solicitud enviada');
-      this.topic = '';
-    } catch (error) {
-      console.error(error);
+    // 5. Enviar al Backend
+    this.api.solicitarAsesoria(nuevaCita).subscribe({
+      next: (res: any) => {
+        alert('¡Solicitud enviada con éxito! El experto te contactará por WhatsApp.');
+        // Limpiamos el formulario
+        this.topic = '';
+        this.dateRequest = '';
+        this.clientPhone = '';
+        this.showForm = false; // Ocultamos el formulario
+      },
+      error: (err: any) => {
+        console.error('Error en el servidor:', err);
+        alert('Error al agendar. Verifica los datos e intenta nuevamente.');
+      }
+    });
+  }
+
+  getProjectImage(url: any): string {
+    if (url && typeof url === 'string' && url.trim().length > 5) {
+      return url;
     }
+    return 'https://placehold.co/600x400?text=Proyecto';
   }
 }

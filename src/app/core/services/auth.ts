@@ -1,100 +1,65 @@
-import { Injectable, inject, signal, NgZone } from '@angular/core';
-import { Auth, GoogleAuthProvider, signInWithPopup, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from '@angular/fire/auth';
-import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import { Injectable, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppUser } from '../models/models';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-  private auth = inject(Auth);
-  private firestore = inject(Firestore);
   private router = inject(Router);
-  private ngZone = inject(NgZone); // Vital para que la navegación funcione
 
-  // Signals
-  currentUser = signal<AppUser | null>(null);
-  loading = signal<boolean>(true);
+  // 1. SEÑALES (Signals) NECESARIAS
+  // 'currentUser': Para saber quién está logueado
+  // 'loading': Para que los Guards esperen si es necesario (ESTA FALTABA)
+  currentUser = signal<any>(this.getUserFromStorage());
+  loading = signal<boolean>(false); 
 
-  constructor() {
-    // Escuchador oficial de Firebase (Cero errores de contexto)
-    onAuthStateChanged(this.auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        // 1. Usuario logueado -> Buscamos datos en Firestore
-        try {
-          const userDocRef = doc(this.firestore, `users/${firebaseUser.uid}`);
-          const userSnapshot = await getDoc(userDocRef);
+  constructor() {}
 
-          if (userSnapshot.exists()) {
-            // Usuario existe: cargamos datos
-            const userData = userSnapshot.data() as AppUser;
-            this.updateState(userData);
-          } else {
-            // Usuario nuevo: lo creamos
-            const newUser: AppUser = {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email || '',
-              displayName: firebaseUser.displayName || 'Usuario',
-              photoURL: firebaseUser.photoURL || '',
-              role: 'user'
-            };
-            await setDoc(userDocRef, newUser);
-            this.updateState(newUser);
-          }
-        } catch (error) {
-          console.error('Error recuperando usuario:', error);
-          this.updateState(null);
-        }
-      } else {
-        // 2. No hay usuario (Logout)
-        this.updateState(null);
-      }
-    });
-  }
-
-  // Helper para actualizar señales dentro de la zona de Angular
-  private updateState(user: AppUser | null) {
-    this.ngZone.run(() => {
-      this.currentUser.set(user);
-      this.loading.set(false);
-      console.log('✅ Auth Actualizado:', user?.role || 'Sin sesión');
-    });
-  }
-
-  // --- MÉTODOS PÚBLICOS ---
-
-  async loginWithGoogle() {
+  // Recuperar usuario del localStorage al iniciar la app
+  private getUserFromStorage() {
+    const userStr = localStorage.getItem('usuario');
     try {
-      await signInWithPopup(this.auth, new GoogleAuthProvider());
-      this.router.navigate(['/']);
-    } catch (error) {
-      console.error(error);
+      return userStr ? JSON.parse(userStr) : null;
+    } catch (e) {
+      return null;
     }
   }
 
-  async loginWithEmail(email: string, pass: string) {
-    await signInWithEmailAndPassword(this.auth, email, pass);
-    this.router.navigate(['/']);
-  }
-
-  async registerWithEmail(email: string, pass: string, name: string) {
-    const credential = await createUserWithEmailAndPassword(this.auth, email, pass);
-    await updateProfile(credential.user, { displayName: name });
+  // 2. LOGIN (Actualiza la señal al instante)
+  loginSuccess(token: string, usuario: any) {
+    this.loading.set(true); // Activamos carga
     
-    // Guardamos en Firestore
-    const newUser: AppUser = {
-      uid: credential.user.uid,
-      email: email,
-      displayName: name,
-      photoURL: '',
-      role: 'user'
-    };
-    await setDoc(doc(this.firestore, `users/${credential.user.uid}`), newUser);
-    this.router.navigate(['/']);
+    // Guardamos Token
+    localStorage.setItem('token', token);
+    
+    // Limpieza de Rol por si acaso venga sucio del backend
+    if (usuario && usuario.rol) {
+       usuario.rol = String(usuario.rol)
+                      .replace('ROLE_', '')
+                      .replace('[', '')
+                      .replace(']', '')
+                      .toUpperCase()
+                      .trim();
+    }
+
+    // Guardamos Usuario
+    localStorage.setItem('usuario', JSON.stringify(usuario));
+    
+    // Actualizamos la señal
+    this.currentUser.set(usuario);
+    this.loading.set(false); // Desactivamos carga
   }
 
-  async logout() {
-    await signOut(this.auth);
-    this.router.navigate(['/']);
+  // 3. LOGOUT
+  logout() {
+    localStorage.clear(); // Borra todo
     this.currentUser.set(null);
+    this.router.navigate(['/auth/login']);
+  }
+
+  // 4. Helper para obtener el rol limpio (útil para los Guards)
+  getRole(): string {
+    const user = this.currentUser();
+    return user?.rol || '';
   }
 }

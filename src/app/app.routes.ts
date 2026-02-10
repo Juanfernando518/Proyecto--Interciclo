@@ -1,68 +1,76 @@
 import { Routes } from '@angular/router';
 
-// IMPORTS DE TUS COMPONENTES (Asegúrate que las rutas sean correctas)
+// COMPONENTES (Asegúrate de que los nombres de las clases sean correctos)
 import { Home } from './public/home/home';
 import { Portfolios } from './public/portfolios/portfolios';
-import { Projects } from './programmer/projects/projects';
-import { AdviceRequests } from './programmer/advice-requests/advice-requests';
+import { Login } from './auth/login/login';
+import { MyRequestsComponent } from './user/my-requests/my-requests'; // Verifica si la clase se llama así o 'MyRequests'
+
+// COMPONENTES DE PROGRAMADOR
+import { ProjectsComponent } from './programmer/projects/projects'; // Verifica nombre de clase
 import { ProfileComponent } from './programmer/programmer-profile/programmer-profile';
-import { DashboardComponent } from './admin/dashboard/dashboard';
-import { MyRequests } from './user/my-requests/my-requests';
+import { AdviceRequests } from './programmer/advice-requests/advice-requests';
 
-// IMPORTS DE LOS GUARDS (SEGURIDAD)
-import { adminGuard } from './core/guards/admin-guard';
+// COMPONENTE ADMIN
+import { DashboardComponent } from './pages/admin-dashboard/admin-dashboard'; 
+
+// GUARDS (Seguridad)
+
+import { adminGuard } from './core/guards/admin-guard';    // Ojo: revisa si es 'admin-guard' o 'admin.guard'
+import { authGuard } from './core/guards/auth-guard';
 import { programmerGuard } from './core/guards/programmer-guard';
-import { authGuard } from './core/guards/auth-guard'; 
-
+import { Dashboard } from './programmer/dashboard/dashboard'; // Importa la clase que acabamos de crear
 export const routes: Routes = [
-  
-  // --- 1. RUTAS PÚBLICAS (Accesibles para todos) ---
+  // --- PÚBLICO ---
   { path: '', component: Home },
+  { path: 'home', redirectTo: '' },
+  { path: 'auth/login', component: Login },
   
-  // Ver el portafolio es público, pero agendar (la acción) requiere login en el componente
+  // Ruta para VER la lista de expertos (Botón "Buscar Expertos" / "Ver Expertos")
+  { path: 'portfolios', component: Portfolios }, 
+  
+  // Ruta para ver el DETALLE de un experto (con ID)
   { path: 'portfolio/:id', component: Portfolios },
 
-  // Login y Registro
-  {
-    path: 'auth',
-    loadChildren: () => import('./auth/auth.routes').then(m => m.AUTH_ROUTES)
+  // --- CLIENTE / USUARIO ---
+  // CORRECCIÓN: Agregamos 'user/' antes para que coincida con el menú
+  { 
+    path: 'user/my-requests', 
+    component: MyRequestsComponent, 
+    canActivate: [authGuard] 
   },
 
-
-  // --- 2. RUTAS DE CLIENTE / USUARIO (Requieren estar logueado) ---
+  // --- PROGRAMADOR ---
+  // CORRECCIÓN: Agregamos 'programmer/' antes para que coincida con el menú
   { 
-    path: 'my-requests', 
-    component: MyRequests,
-    canActivate: [authGuard] // <--- IMPORTANTE: Solo usuarios registrados pueden ver sus citas
-  },
-
-
-  // --- 3. RUTAS DE PROGRAMADOR (Requieren rol 'programmer') ---
-  { 
-    path: 'projects', 
-    component: Projects,
-    canActivate: [programmerGuard] // Protegido
+    path: 'programmer/projects', 
+    component: ProjectsComponent, 
+    canActivate: [programmerGuard] 
   },
   { 
-    path: 'advice-requests', 
-    component: AdviceRequests,
-    canActivate: [programmerGuard] // <--- FALTABA ESTO: Protegido
+    path: 'programmer/profile', 
+    component: ProfileComponent, 
+    canActivate: [programmerGuard] 
   },
   { 
-    path: 'profile', 
-    component: ProfileComponent,
-    canActivate: [programmerGuard] // Lo ideal es que sea programmerGuard si es el perfil profesional
+    path: 'programmer/advice-requests', 
+    component: AdviceRequests, 
+    canActivate: [programmerGuard] 
   },
+  { 
+  path: 'programmer/dashboard', 
+  component: Dashboard, 
+  canActivate: [programmerGuard] 
+},
 
-
-  // --- 4. RUTAS DE ADMIN (Requieren rol 'admin') ---
+  // --- ADMIN ---
   { 
     path: 'admin', 
-    component: DashboardComponent,
-    canActivate: [adminGuard] // Protegido
+    component: DashboardComponent, 
+    canActivate: [adminGuard] 
   },
 
-
-  // --- 5. COMODÍN (Siempre al final) ---
+  
+  // COMODÍN (Cualquier ruta desconocida va al inicio)
   { path: '**', redirectTo: '' }
 ];

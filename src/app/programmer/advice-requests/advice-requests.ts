@@ -1,105 +1,74 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Advisory } from '../../core/models/models';
-import { Observable, map, of } from 'rxjs';
-import { FirestoreService } from '../../core/services/firestoreService';
-import { AuthService } from '../../core/services/auth';
+import { ApiBackendService } from '../../services/api-backend';
 
 @Component({
-  selector: 'app-advisories',
+  selector: 'app-advice-requests',
   standalone: true,
-  imports: [CommonModule, FormsModule], // Importante
+  imports: [CommonModule],
   templateUrl: './advice-requests.html',
   styleUrls: ['./advice-requests.css']
 })
-export class AdviceRequests {
-  private firestoreService = inject(FirestoreService);
-  private authService = inject(AuthService);
+export class AdviceRequests implements OnInit {
+  private api = inject(ApiBackendService);
 
-  // Dos listas: Pendientes y Revisadas
-  pending$: Observable<Advisory[]>;
-  history$: Observable<Advisory[]>;
+  solicitudes: any[] = [];
+  loading = true;
 
-  // Para el modal de respuesta
-  selectedAdvisory: Advisory | null = null;
-  responseMessage = ''; // Comentario obligatorio al rechazar/aceptar
-
-  constructor() {
-    const user = this.authService.currentUser();
-    
-    if (user) {
-      // Obtenemos TODAS las asesorías
-      const all$ = this.firestoreService.getAdvisoriesForProgrammer(user.uid);
-
-      // Filtramos las 'pending'
-      this.pending$ = all$.pipe(
-        map(list => list.filter(a => a.status === 'pending'))
-      );
-
-      // Filtramos las que ya NO son 'pending' (accepted/rejected)
-      this.history$ = all$.pipe(
-        map(list => list.filter(a => a.status !== 'pending'))
-      );
-    } else {
-      this.pending$ = of([]);
-      this.history$ = of([]);
-    }
+  ngOnInit() {
+    this.cargarSolicitudes();
   }
 
-  // Abrir modal para responder
-  openResponse(advisory: Advisory) {
-    this.selectedAdvisory = advisory;
-    this.responseMessage = ''; // Limpiar mensaje
-  }
-
-  // Enviar la decisión
-  async submitResponse(status: 'accepted' | 'rejected') {
-    if (!this.selectedAdvisory?.id) return;
-    
-    if (!this.responseMessage.trim()) {
-      alert('Por favor escribe un mensaje para el cliente.');
-      return;
-    }
-
-    try {
-      await this.firestoreService.updateAdvisoryStatus(
-        this.selectedAdvisory.id,
-        status,
-        this.responseMessage
-      );
-      
-      if (status === 'accepted') {
-        // CASO 1: APROBADO
-        // NO cerramos el modal (no hacemos selectedAdvisory = null)
-        // Actualizamos el estado localmente para que el HTML muestre los botones de WhatsApp
-        this.selectedAdvisory.status = 'accepted'; 
-        alert('Solicitud APROBADA. Ahora puedes contactar al cliente.');
-      } else {
-        // CASO 2: RECHAZADO
-        // Aquí sí cerramos el modal inmediatamente
-        alert('Solicitud RECHAZADA.');
-        this.selectedAdvisory = null; 
+  cargarSolicitudes() {
+    // 🔥 CORRECCIÓN: Usamos el nombre unificado 'obtenerCitasRecibidas'
+    this.api.obtenerCitasRecibidas().subscribe({
+      next: (data: any) => {
+        this.solicitudes = data;
+        this.loading = false;
+      },
+      error: (err: any) => {
+        console.error('Error cargando citas:', err);
+        this.loading = false;
       }
-      
-    } catch (error) {
-      console.error(error);
-      alert('Error al actualizar');
+    });
+  }
+
+  responder(id: number, estado: 'ACEPTADA' | 'RECHAZADA') {
+    // Convertimos el texto para el mensaje (opcional, solo visual)
+    const accion = estado === 'ACEPTADA' ? 'aceptar' : 'rechazar';
+    
+    if (!confirm(`¿Estás seguro de ${accion} esta solicitud?`)) return;
+
+    this.api.responderCita(id, estado).subscribe({
+      next: () => {
+        alert(`Solicitud ${estado} correctamente.`);
+        this.cargarSolicitudes(); // Recargamos la lista
+      },
+      error: (e) => {
+        console.error(e);
+        alert('Error al procesar la respuesta. Intenta de nuevo.');
+      }
+    });
+  }
+
+  // --- GENERADOR DE LINK DE WHATSAPP ---
+  getWhatsAppLink(cita: any): string {
+    if (!cita.celular) return '#';
+
+    const nombre = cita.cliente?.nombre || 'Hola';
+    const tema = cita.tema;
+    let mensaje = '';
+
+    // Lógica para pre-llenar el mensaje según el estado
+    if (cita.estado === 'ACEPTADA') {
+      mensaje = `Hola ${nombre}, he aceptado tu solicitud de asesoría sobre "${tema}". ¿Cuándo podemos coordinar los detalles? 🚀`;
+    } else if (cita.estado === 'RECHAZADA') {
+      mensaje = `Hola ${nombre}, gracias por contactarme. Lamentablemente no puedo tomar tu solicitud sobre "${tema}" en este momento. Disculpa las molestias. 🙏`;
+    } else {
+      // Mensaje por defecto si está pendiente
+      mensaje = `Hola ${nombre}, recibí tu solicitud sobre "${tema}".`;
     }
-  }
-  getWhatsAppLink(advisory: Advisory): string {
-    if (!advisory.clientPhone) return '#'; // Si no dio teléfono, no hace nada
-    
-    const text = `Hola ${advisory.clientName}, soy el programador. He ACEPTADO tu solicitud de asesoría sobre "${advisory.topic}". Nos vemos el ${new Date(advisory.dateRequest).toLocaleString()}.`;
-    
-    // Formato universal para WhatsApp Web/App
-    return `https://wa.me/${advisory.clientPhone}?text=${encodeURIComponent(text)}`;
-  }
-  // GENERAR LINK DE CORREO (MAILTO)
-  getMailLink(advisory: Advisory): string {
-    const subject = `Confirmación de Asesoría: ${advisory.topic}`;
-    const body = `Hola ${advisory.clientName},\n\nHe aceptado tu solicitud de asesoría para la fecha: ${new Date(advisory.dateRequest).toLocaleString()}.\n\nSaludos cordiales.`;
-    
-    return `mailto:${advisory.clientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    return `https://wa.me/${cita.celular}?text=${encodeURIComponent(mensaje)}`;
   }
 }

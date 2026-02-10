@@ -1,32 +1,40 @@
-import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { inject } from '@angular/core';
+import { AuthService } from '../services/auth'; // Ajusta la ruta a tu auth.ts
 
-import { filter, map, take } from 'rxjs';
-import { AuthService } from '../services/auth';
-
-export const adminGuard: CanActivateFn = () => {
+export const adminGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  return toObservable(auth.loading).pipe(
-    // 1. Esperamos a que loading sea falso
-    filter(loading => !loading),
-    take(1),
-    map(() => {
-      const user = auth.currentUser();
-      
-      console.log('🛡️ AdminGuard revisando:', user); // LOG DE CONTROL
+  // 1. Obtenemos el usuario de la SEÑAL (Signal)
+  const user = auth.currentUser();
+  
+  // 2. Debug en consola para que veas qué pasa
+  console.log('🔍 AdminGuard revisando usuario:', user);
 
-      // Validamos si existe Y si el rol es admin
-      if (user && user.role === 'admin') {
-        console.log('✅ Acceso concedido: Eres Admin');
-        return true;
-      }
+  if (!user) {
+    console.warn('⛔ Acceso denegado: No hay usuario logueado');
+    router.navigate(['/auth/login']);
+    return false;
+  }
 
-      console.warn('⛔ Acceso denegado. Tu rol es:', user?.role);
-      router.navigate(['/']);
-      return false;
-    })
-  );
+  // 3. LIMPIEZA DE ROL (Crucial para que funcione)
+  // Convertimos "[ROLE_ADMIN]" o "ADMIN" a simplemente "ADMIN"
+  const rolLimpio = String(user.rol || '')
+                      .replace('ROLE_', '')
+                      .replace('[', '')
+                      .replace(']', '')
+                      .toUpperCase()
+                      .trim();
+
+  console.log('✅ Rol detectado:', rolLimpio);
+
+  // 4. VERIFICACIÓN
+  if (rolLimpio === 'ADMIN') {
+    return true; // ¡Pase usted!
+  } else {
+    console.error(`⛔ Acceso denegado. Se requiere ADMIN, tienes: ${rolLimpio}`);
+    router.navigate(['/']); // Te devuelve al home
+    return false;
+  }
 };

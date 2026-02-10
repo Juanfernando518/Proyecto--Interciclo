@@ -1,15 +1,180 @@
-/* --- RESET GLOBAL --- */
-/* Esto es fundamental: hace que el padding no aumente el ancho de las cajas */
-*, *::before, *::after {
-  box-sizing: border-box;
+/* =========================
+   VARIABLES GLOBALES (MODERNO)
+========================= */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Paleta Principal */
+  --primary: #4f46e5;       /* Indigo */
+  --primary-hover: #4338ca;
+  --secondary: #64748b;     /* Slate Gray */
+  
+  /* Estados */
+  --success: #10b981;       /* Emerald Green */
+  --warning: #f59e0b;       /* Amber */
+  --danger: #ef4444;        /* Red */
+  --info: #3b82f6;          /* Blue */
+
+  /* Fondos y Textos */
+  --bg-body: #f8fafc;       /* Gris muy claro */
+  --bg-card: #ffffff;
+  --text-main: #0f172a;     /* Casi negro */
+  --text-muted: #64748b;    /* Gris texto */
+  
+  /* Efectos */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-primary: 0 10px 25px -5px rgba(79, 70, 229, 0.3); /* Sombra de color */
+  
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
 }
 
-html, body {
-  height: 100%;
+/* =========================
+   RESET Y BODY
+========================= */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  /* Evita el scroll horizontal en toda la app */
-  overflow-x: hidden;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #f8fafc; /* Un fondo gris muy suave para toda la app */
-}/* You can add global styles to this file, and also import other style files */
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif; /* Fuente Moderna */
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased; /* Texto más nítido */
+  line-height: 1.6;
+}
+
+/* =========================
+   UTILIDADES
+========================= */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================
+   BOTONES (MODERNIZADOS)
+========================= */
+button, .btn {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-primary);
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  color: var(--text-main);
+}
+.btn-outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #fff;
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: var(--danger);
+}
+.btn-danger:hover {
+  background: var(--danger);
+  color: white;
+}
+
+/* =========================
+   INPUTS (ESTILO "STRIPE")
+========================= */
+input, textarea, select {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid #e2e8f0;
+  background-color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  transition: all 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); /* Anillo suave */
+}
+
+input::placeholder { color: #94a3b8; }
+
+/* =========================
+   TARJETAS
+========================= */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm); /* Sombra sutil por defecto */
+  border: 1px solid #f1f5f9;
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* =========================
+   BADGES (ETIQUETAS)
+========================= */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge.admin { background: #fee2e2; color: #991b1b; }      /* Rojo suave */
+.badge.programador { background: #fef3c7; color: #92400e; } /* Ambar suave */
+.badge.usuario { background: #e0e7ff; color: #3730a3; }     /* Indigo suave */
+.badge.virtual { background: #dbeafe; color: #1e40af; }
+.badge.presencial { background: #dcfce7; color: #166534; }

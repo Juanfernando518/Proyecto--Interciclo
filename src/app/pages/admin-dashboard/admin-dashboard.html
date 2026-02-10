@@ -1,35 +1,90 @@
-<div class="container">
-  <h2>Panel de Administración</h2>
-  <p>Gestiona los roles de los usuarios registrados.</p>
+<div class="admin-container fade-in">
+  
+  <header class="admin-header">
+    <h1>🛡️ Panel de Administración</h1>
+    <button (click)="descargarReporte()" class="btn-pdf">
+  <span class="icon">📄</span> Descargar Reporte PDF
+</button>
+  </header>
 
-  <table class="user-table">
-    <thead>
-      <tr>
-        <th>Usuario</th>
-        <th>Email</th>
-        <th>Rol Actual</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users$ | async">
-        <td>
-          <img [src]="user.photoURL || 'https://via.placeholder.com/40'" class="avatar">
-          {{ user.displayName }}
-        </td>
-        <td>{{ user.email }}</td>
-        <td>
-          <span [class]="'badge ' + user.role">{{ user.role | uppercase }}</span>
-        </td>
-        <td>
-          <button *ngIf="user.role !== 'programmer'" (click)="makeProgrammer(user)">
-            Ascender a Programador
-          </button>
-          <button *ngIf="user.role === 'programmer'" (click)="removePrivileges(user)" class="danger">
-            Degradar
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="stats-grid">
+    
+    <div class="stat-card blue">
+      <h3>👥 Usuarios</h3>
+      <p class="number">{{ stats.totalUsuarios }}</p>
+    </div>
+    
+    <div class="stat-card green">
+      <h3>📅 Citas</h3>
+      <p class="number">{{ stats.totalCitas }}</p>
+    </div>
+    
+    </div>
+
+  <div class="table-container">
+    <h2>Lista de Usuarios</h2>
+    
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Email</th>
+          <th>Rol Actual</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of usuarios; track user.id) {
+          <tr>
+            <td>{{ user.id }}</td>
+            
+            <td>
+              <div class="user-cell">
+                <img [src]="user.fotoPerfil || 'https://ui-avatars.com/api/?background=random&name=' + user.nombre" 
+                     (error)="img.src='https://ui-avatars.com/api/?background=random&name=' + user.nombre"
+                     class="avatar-mini"
+                     #img>
+                
+                {{ user.nombre }}
+              </div>
+            </td>
+            
+            <td>{{ user.email }}</td>
+            
+            <td>
+              <span class="badge" 
+                [class.admin]="user.rol == 'ADMIN'"
+                [class.programador]="user.rol == 'PROGRAMADOR'"
+                [class.usuario]="user.rol == 'USUARIO'">
+                {{ user.rol }}
+              </span>
+            </td>
+            
+            <td>
+              <div class="actions-cell">
+                
+                <button (click)="eliminar(user.id)" class="btn-icon delete" title="Eliminar">
+                  🗑️
+                </button>
+
+                @if (user.rol !== 'USUARIO') {
+                  <button (click)="descender(user)" class="btn-icon down" title="Degradar">
+                    ⬇️
+                  </button>
+                }
+
+                @if (user.rol !== 'ADMIN') {
+                  <button (click)="ascender(user)" class="btn-icon up" title="Ascender">
+                    ⬆️
+                  </button>
+                }
+
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>

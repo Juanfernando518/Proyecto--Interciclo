@@ -1,72 +1,39 @@
-<div class="layout-container">
+<nav class="navbar">
+  <div class="nav-left">
+    <a routerLink="/" class="logo">🚀 DevPortfolio</a>
+    
+    <div class="menu-items">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">🏠 Inicio</a>
 
-  <header class="navbar">
-    <div class="navbar-left">
-      <button class="btn-menu lg-hidden" (click)="toggleSidebar()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-      </button>
-      <a routerLink="/" class="brand-logo">🚀 DevPortfolio</a>
-    </div>
+      @if (rol === 'PROGRAMADOR') {
+        <a routerLink="/programmer/dashboard" routerLinkActive="active">📊 Dashboard</a>
+        <a routerLink="/programmer/projects" routerLinkActive="active">📂 Mis Proyectos</a>
+        <a routerLink="/programmer/advice-requests" routerLinkActive="active">📅 Solicitudes</a>
+        <a routerLink="/programmer/profile" routerLinkActive="active">👤 Mi Perfil</a>
+      }
 
-    <div class="navbar-right">
-      @if (currentUser(); as user) {
-        <div class="user-badge" [title]="user.role">
-          <span class="role-pill" [class]="user.role">{{ user.role | uppercase }}</span>
-          <img [src]="user.photoURL || 'https://ui-avatars.com/api/?background=random&name='+user.email" class="avatar-circle">
-        </div>
-      } @else {
-        <a routerLink="/auth/login" class="btn-login">Ingresar</a>
+      @if (rol === 'ADMIN') {
+        <a routerLink="/admin" routerLinkActive="active">🛡️ Admin</a>
+      }
+
+      @if (rol === 'USUARIO') {
+        <a routerLink="/user/my-requests" routerLinkActive="active">📅 Mis Citas</a>
       }
     </div>
-  </header>
-
-  <div class="body-wrapper">
-    
-    <aside class="sidebar" [class.open]="isSidebarOpen()">
-      <div class="sidebar-header lg-hidden">
-        <span>Menú</span>
-        <button (click)="closeSidebar()">×</button>
-      </div>
-
-      <nav class="nav-links">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" (click)="closeSidebar()">
-          🏠 Inicio
-        </a>
-
-        @if (currentUser()?.role === 'programmer') {
-          <div class="nav-divider">PROGRAMADOR</div>
-          <a routerLink="/projects" routerLinkActive="active" (click)="closeSidebar()">📂 Mis Proyectos</a>
-          <a routerLink="/advice-requests" routerLinkActive="active" (click)="closeSidebar()">📬 Solicitudes</a>
-          <a routerLink="/profile" routerLinkActive="active" (click)="closeSidebar()">✏️ Editar Perfil</a>
-        }
-
-        @if (currentUser()?.role === 'admin') {
-          <div class="nav-divider">ADMINISTRACIÓN</div>
-          <a routerLink="/admin" routerLinkActive="active" (click)="closeSidebar()">🛡️ Panel Admin</a>
-        }
-
-       @if (currentUser()) {
-          <div class="nav-divider">CUENTA</div>
-          
-          <a routerLink="/my-requests" routerLinkActive="active" (click)="closeSidebar()">
-            📦 Mis Solicitudes
-          </a>
-          
-          <button (click)="logout()" class="btn-logout">🚪 Cerrar Sesión</button>
-        }
-      </nav>
-    </aside>
-
-    @if (isSidebarOpen()) { <div class="overlay lg-hidden" (click)="closeSidebar()"></div> }
-
-    <main class="main-content">
-      
-      <div class="page-container">
-        <router-outlet></router-outlet>
-      </div>
-
-      <app-footer></app-footer>
-    </main>
-
   </div>
+
+  <div class="nav-right">
+    @if (rol) {
+      <span class="role-badge" [class]="rol">{{ rol }}</span>
+      <button (click)="logout()" class="btn-logout">Salir</button>
+    }
+    
+    @if (!rol) {
+      <a routerLink="/auth/login" class="btn-login-nav">🔐 Ingresar</a>
+    }
+  </div>
+</nav>
+
+<div class="content">
+  <router-outlet></router-outlet>
 </div>

@@ -1,49 +1,48 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AppUser } from '../../core/models/models';
-import { AuthService } from '../../core/services/auth';
-import { FirestoreService } from '../../core/services/firestoreService';
+import { ApiBackendService } from '../../services/api-backend';
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-programmer-profile',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './programmer-profile.html',
   styleUrls: ['./programmer-profile.css']
 })
-export class ProfileComponent {
-  authService = inject(AuthService);
-  firestoreService = inject(FirestoreService);
-  
-  // Copia de los datos para editar sin afectar la signal directamente
-  userProfile: Partial<AppUser> = {};
-  isLoading = false;
+export class ProfileComponent implements OnInit {
+  private api = inject(ApiBackendService);
 
-  constructor() {
-    // Cargar datos actuales
-    const currentUser = this.authService.currentUser();
-    if (currentUser) {
-      this.userProfile = { ...currentUser };
-    }
+  usuario: any = {};
+  mensaje = '';
+  loading = false;
+
+  ngOnInit() {
+    this.cargarDatos();
   }
 
-  async saveProfile() {
-    const uid = this.authService.currentUser()?.uid;
-    if (!uid) return;
+  cargarDatos() {
+    // CORRECCIÓN: El método es obtenerPerfil
+    this.api.obtenerPerfil().subscribe({
+      next: (data) => this.usuario = data,
+      error: (err) => console.error('Error cargando perfil:', err)
+    });
+  }
 
-    this.isLoading = true;
-    try {
-      await this.firestoreService.updateUser(uid, this.userProfile);
-      alert('✅ Perfil actualizado correctamente');
-      
-      // Truco: Recargamos la página para que la Signal de AuthService se actualice con los nuevos datos
-      window.location.reload(); 
-    } catch (error) {
-      console.error(error);
-      alert('❌ Error al guardar');
-    } finally {
-      this.isLoading = false;
-    }
+  guardarCambios() {
+    this.loading = true;
+    this.mensaje = '';
+
+    this.api.actualizarPerfil(this.usuario).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.mensaje = '✅ ¡Perfil actualizado correctamente!';
+        this.usuario = res;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.mensaje = '❌ Error al actualizar. Intenta de nuevo.';
+      }
+    });
   }
 }

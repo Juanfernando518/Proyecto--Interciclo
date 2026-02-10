@@ -1,9 +1,9 @@
 export const environment = {
-  production: false,
-  // CAMBIO AQUÍ: Ponemos la URL de Render directamente
+  production: true,
+  // URL de tu Backend en Render (la que ya funciona)
   apiUrl: 'https://backend-portafolio-pes5.onrender.com/api',
   
-  // Mantén tu config de Firebase igual
+  // ¡OBLIGATORIO: Copia aquí también la config de Firebase!
   firebase: {
     apiKey: "AIzaSyCeSQ0tlLM69UNC9tWUomJr2AmlCZkdzrY",
     authDomain: "portfolio-integrador-31c6f.firebaseapp.com",

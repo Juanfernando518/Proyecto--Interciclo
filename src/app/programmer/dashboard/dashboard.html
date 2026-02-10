@@ -1,1 +1,91 @@
-<p>dashboard works!</p>
+<div class="dashboard-container fade-in">
+  
+  <header class="dash-header">
+    <h1>👋 Bienvenido, Dev!</h1>
+    <p>Aquí tienes el resumen de tu actividad.</p>
+  </header>
+
+  <div class="stats-grid">
+    <div class="card purple">
+      <div class="icon">📅</div>
+      <div class="info">
+        <h3>Total Citas</h3>
+        <p class="number">{{ stats.total }}</p>
+      </div>
+    </div>
+
+    <div class="card orange">
+      <div class="icon">⏳</div>
+      <div class="info">
+        <h3>Pendientes</h3>
+        <p class="number">{{ stats.pendientes }}</p>
+      </div>
+    </div>
+
+    <div class="card green">
+      <div class="icon">💰</div>
+      <div class="info">
+        <h3>Ganancia Est.</h3>
+        <p class="number">${{ stats.ganancias }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    
+    <div class="panel chart-panel">
+      <h2>📊 Rendimiento de Asesorías</h2>
+      
+      <div class="chart-bar">
+        <div class="label">
+          <span>Aceptadas</span>
+          <span>{{ stats.aceptadas }}</span>
+        </div>
+        <div class="progress-bg">
+          <div class="progress-fill green-fill" [style.width.%]="(stats.aceptadas / stats.total * 100) || 0"></div>
+        </div>
+      </div>
+
+      <div class="chart-bar">
+        <div class="label">
+          <span>Pendientes</span>
+          <span>{{ stats.pendientes }}</span>
+        </div>
+        <div class="progress-bg">
+          <div class="progress-fill orange-fill" [style.width.%]="(stats.pendientes / stats.total * 100) || 0"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="panel list-panel">
+      <h2>🚀 Últimas Solicitudes</h2>
+      
+      <table class="simple-table" *ngIf="citasRecientes.length > 0; else noData">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Tema</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cita of citasRecientes">
+            <td>{{ cita.cliente?.nombre || 'Anónimo' }}</td>
+            <td>{{ cita.tema }}</td>
+            <td>
+              <span class="status-badge" [class]="cita.estado">{{ cita.estado }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noData>
+        <div class="empty-state">
+          <p>Aún no tienes solicitudes.</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </div>
+</div>

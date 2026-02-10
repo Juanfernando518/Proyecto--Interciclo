@@ -1,54 +1,45 @@
+<div style="position: fixed; top: 100px; right: 10px; background: black; color: #0f0; padding: 15px; z-index: 99999; border: 3px solid red; font-family: monospace; font-size: 14px; max-width: 300px;">
+  <p><strong>🕵️‍♂️ DETECTIVE DE ROL:</strong></p>
+  <p>1. role (inglés): "{{ currentUser()?.role }}"</p>
+  <p>2. rol (español): "{{ currentUser()?.rol }}"</p>
+  <hr>
+  <p>¿Coincide con 'PROGRAMADOR'?</p>
+  <p>Con 'role': {{ currentUser()?.role === 'PROGRAMADOR' }}</p>
+  <p>Con 'rol': {{ currentUser()?.rol === 'PROGRAMADOR' }}</p>
+</div>
 <div class="layout-container">
   
   <header class="navbar">
     <div class="navbar-left">
       <button class="btn-menu lg-hidden" (click)="toggleSidebar()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
       </button>
-      
       <a routerLink="/" class="brand-logo">🚀 DevPortfolio</a>
     </div>
 
     <div class="navbar-right">
       @if (currentUser(); as user) {
         <div class="profile-section">
-          
-          <span class="role-badge" [class]="user.role">
-            {{ user.role | uppercase }}
+          <span class="role-badge">
+             {{ (user.role || user.rol || 'INVITADO') | uppercase }}
           </span>
 
           <div class="user-info">
-            <span class="user-name sm-hidden">
-              {{ user.displayName || 'Usuario' }}
-            </span>
-            <img [src]="user.photoURL || 'https://ui-avatars.com/api/?background=random&name='+user.email" 
-                 class="avatar-img"
-                 alt="Avatar">
+            <span class="user-name sm-hidden">{{ user.displayName || user.nombre || 'Usuario' }}</span>
+            <img [src]="user.photoURL || user.fotoPerfil || 'https://ui-avatars.com/api/?background=random&name='+user.email" class="avatar-img">
           </div>
 
           <button (click)="logout()" class="btn-logout-icon" title="Cerrar Sesión">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
           </button>
-
         </div>
       } @else {
-        <a routerLink="/auth/login" class="btn-login">
-          Ingresar
-        </a>
+        <a routerLink="/auth/login" class="btn-login">Ingresar</a>
       }
     </div>
   </header>
 
   <div class="content-wrapper">
-    
     <aside class="sidebar" [class.open]="isSidebarOpen()">
       <div class="sidebar-header">
         <h3>Menú</h3>
@@ -59,45 +50,35 @@
         <ul>
           <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeSidebar()">🏠 Inicio</a></li>
           
-          @if (currentUser()?.role === 'programmer') {
-            <li class="section-title">Programador</li>
+          @if (currentUser()?.role === 'PROGRAMADOR' || currentUser()?.rol === 'PROGRAMADOR' || currentUser()?.role === 'programmer') {
+            
+            <li class="section-title" style="color: lime;">✅ MENÚ PROGRAMADOR</li>
+            
+            <li><a routerLink="/projects" routerLinkActive="active" (click)="closeSidebar()">📂 Mis Proyectos</a></li>
+            
             <li>
-              <a routerLink="/profile" routerLinkActive="active" (click)="closeSidebar()">
-                ✏️ Editar Perfil
+              <a routerLink="/advice-requests" routerLinkActive="active" (click)="closeSidebar()" style="color: #ff9800; font-weight: bold;">
+                📥 Gestionar Citas
               </a>
             </li>
-            <li>
-              <a [routerLink]="['/portfolio', currentUser()?.uid]" routerLinkActive="active" (click)="closeSidebar()">
-                👁️ Ver mi Portafolio Público
-              </a>
-            </li>
-            <li><a routerLink="/my-projects" routerLinkActive="active" (click)="closeSidebar()">📂 Mis Proyectos</a></li>
-            <li><a routerLink="/advice-requests" routerLinkActive="active" (click)="closeSidebar()">📬 Solicitudes</a></li>
-          }
-
-          @if (currentUser()?.role === 'admin') {
-            <li class="section-title">Administrador</li>
-            <li><a routerLink="/admin-dashboard" routerLinkActive="active" (click)="closeSidebar()">🛡️ Panel Admin</a></li>
+            
+            <li><a routerLink="/profile" routerLinkActive="active" (click)="closeSidebar()">✏️ Editar Perfil</a></li>
           }
 
           @if (currentUser()) {
              <li class="divider"></li>
-             @if (currentUser()?.role !== 'programmer') {
-                <li><a routerLink="/profile" routerLinkActive="active" (click)="closeSidebar()">👤 Mi Perfil</a></li>
-             }
+             <li class="section-title">MI CUENTA</li>
+             <li><a routerLink="/my-requests" routerLinkActive="active" (click)="closeSidebar()">📤 Mis Pedidos</a></li>
              <li><button (click)="logout()" class="btn-logout">🚪 Cerrar Sesión</button></li>
           }
         </ul>
       </nav>
     </aside>
 
-    @if (isSidebarOpen()) {
-      <div class="overlay lg-hidden" (click)="closeSidebar()"></div>
-    }
+    @if (isSidebarOpen()) { <div class="overlay lg-hidden" (click)="closeSidebar()"></div> }
 
     <main class="main-content">
       <router-outlet></router-outlet>
     </main>
-
   </div>
 </div>

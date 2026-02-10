@@ -1,87 +1,117 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // <--- IMPORTANTE
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/services/auth';
+import { Router } from '@angular/router';
+import { Auth, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import { ApiBackendService } from '../../services/api-backend';
+import { AuthService } from '../../core/services/auth'; // Importamos el Auth arreglado
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule], // <--- AGREGAR AQUÍ
+  imports: [FormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
+  private api = inject(ApiBackendService);
   private authService = inject(AuthService);
+  private router = inject(Router);
+  private auth = inject(Auth);
 
-  // Variables para el formulario
+  // --- VARIABLES QUE FALTABAN ---
   email = '';
   password = '';
-  name = '';
+  name = ''; 
   errorMessage = '';
-  isRegistering = false;
+  isRegistering = false; 
 
-
+  // --- MÉTODOS VISUALES ---
   toggleMode() {
     this.isRegistering = !this.isRegistering;
-    this.errorMessage = ''; // Limpiar errores
-  }
-  async submit() {
     this.errorMessage = '';
+  }
 
-    // Validaciones básicas
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Por favor completa los campos.';
-      return;
-    }
-
-    if (this.isRegistering && !this.name) {
-      this.errorMessage = 'El nombre es obligatorio para registrarse.';
-      return;
-    }
-
-    try {
-      if (this.isRegistering) {
-        // MODO REGISTRO
-        await this.authService.registerWithEmail(this.email, this.password, this.name);
-      } else {
-        // MODO LOGIN
-        await this.authService.loginWithEmail(this.email, this.password);
-      }
-    } catch (error: any) {
-      // Manejo de errores comunes de Firebase
-      if (error.code === 'auth/email-already-in-use') {
-        this.errorMessage = 'Este correo ya está registrado.';
-      } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
-        this.errorMessage = 'Correo o contraseña incorrectos.';
-      } else if (error.code === 'auth/weak-password') {
-        this.errorMessage = 'La contraseña debe tener al menos 6 caracteres.';
-      } else {
-        this.errorMessage = 'Ocurrió un error. Intenta de nuevo.';
-        console.error(error);
-      }
+  submit() {
+    this.errorMessage = '';
+    if (this.isRegistering) {
+      this.registrarManual();
+    } else {
+      this.ingresarManual();
     }
   }
 
-
-  loginGoogle() {
-    this.authService.loginWithGoogle();
+  // --- LÓGICA MANUAL ---
+  ingresarManual() {
+    this.api.login({ email: this.email, password: this.password }).subscribe({
+      next: (res) => this.manejarExito(res),
+      error: () => this.errorMessage = 'Credenciales incorrectas.'
+    });
   }
 
-  async loginEmail() {
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Por favor completa ambos campos';
-      return;
-    }
+  registrarManual() {
+    const datos = { nombre: this.name, email: this.email, password: this.password, rol: 'USUARIO' };
+    this.api.register(datos).subscribe({
+      next: (res) => this.manejarExito(res),
+      error: () => this.errorMessage = 'El correo ya está registrado.'
+    });
+  }
 
+  // --- LÓGICA GOOGLE (La que faltaba) ---
+  async loginGoogle() {
     try {
-      await this.authService.loginWithEmail(this.email, this.password);
-    } catch (error: any) {
-      // Manejo simple de errores
-      if (error.code === 'auth/invalid-credential') {
-        this.errorMessage = 'Correo o contraseña incorrectos';
-      } else {
-        this.errorMessage = 'Ocurrió un error al intentar ingresar';
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+      const credencial = await signInWithPopup(this.auth, provider);
+      const user = credencial.user;
+      const passwordGoogle = 'google-auth-secret'; 
+      
+      const datosRegistro = {
+        nombre: user.displayName || 'Usuario Google',
+        email: user.email,
+        password: passwordGoogle,
+        rol: 'USUARIO'
+      };
+
+      // Intentamos registrar, si falla intentamos loguear
+      this.api.register(datosRegistro).subscribe({
+        next: (res) => this.manejarExito(res),
+        error: () => {
+          this.api.login({ email: user.email, password: passwordGoogle }).subscribe({
+            next: (res) => this.manejarExito(res),
+            error: () => this.errorMessage = 'Error al sincronizar con el servidor.'
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error Google:', error);
+    }
+  }
+
+  // --- MANEJO DE ÉXITO CON AUTH SERVICE ---
+  private manejarExito(res: any) {
+    if (res && res.token) {
+      // 1. Preparamos el usuario
+      let usuarioData = res.usuario || {};
+      
+      // Intentamos sacar el rol del token si no viene
+      if (!usuarioData.rol) {
+          try {
+            const payload = JSON.parse(atob(res.token.split('.')[1]));
+            usuarioData.rol = payload.rol; 
+            usuarioData.email = payload.sub;
+          } catch(e) { 
+             usuarioData.rol = 'USUARIO'; 
+          }
       }
+
+      // 2. Usamos el AuthService para actualizar la señal (Adiós F5)
+      this.authService.loginSuccess(res.token, usuarioData);
+      
+      this.router.navigate(['/']);
+    } else {
+      this.errorMessage = "Error: El servidor no envió el token.";
     }
   }
 }

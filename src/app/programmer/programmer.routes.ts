@@ -1,13 +1,26 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './dashboard/dashboard';
-import { Projects } from './projects/projects';
-import { ProjectForm } from './project-form/project-form';
-import { AdviceRequests } from './advice-requests/advice-requests';
 
-export const PROGRAMMER_ROUTES: Routes = [
-    {path: '', component: Dashboard},
-    {path: 'projects', component: Projects},
-    {path: 'projects/new', component: ProjectForm},
-    { path: 'projects/edit/:id', component: ProjectForm },
-    {path: 'advice', component: AdviceRequests}
-]
+// CORRECCIÓN 1: Importamos 'ProjectsComponent' (el nombre nuevo) en vez de 'Projects'
+import { ProjectsComponent } from './projects/projects';
+import { AdviceRequests } from './advice-requests/advice-requests';
+import { ProfileComponent } from './programmer-profile/programmer-profile';
+
+export const routes: Routes = [
+  {
+    path: 'projects',
+    component: ProjectsComponent // CORRECCIÓN 2: Usamos la clase correcta aquí
+  },
+  {
+    path: 'advice-requests',
+    component: AdviceRequests
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent
+  },
+  {
+    path: '',
+    redirectTo: 'projects',
+    pathMatch: 'full'
+  }
+];
